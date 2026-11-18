@@ -1,0 +1,22 @@
+import { describe, it, expect } from 'vitest';
+import { CONFIG_RECORRIDO } from './config';
+
+describe('CONFIG_RECORRIDO (Sección 6.3 del RFC)', () => {
+  it('contiene los parámetros exactos exigidos por el RFC', () => {
+    expect(CONFIG_RECORRIDO.PERIODO_TELEMETRIA_MS).toBe(1000);
+    expect(CONFIG_RECORRIDO.UMBRAL_BATERIA_BAJA_PCT).toBe(20);
+    expect(CONFIG_RECORRIDO.MINIMO_DISTANCIA_METROS).toBe(300);
+    expect(CONFIG_RECORRIDO.MINIMO_TIEMPO_MARCHA_SEG).toBe(180);
+    expect(CONFIG_RECORRIDO.CLIMAS_ADVERSOS).toEqual(["LLUVIA", "VIENTO_FUERTE", "TORMENTA"]);
+    expect(CONFIG_RECORRIDO.UMBRAL_FRECUENCIA_CARDIACA_BPM).toBe(160);
+    expect(CONFIG_RECORRIDO.BLUETOOTH_REINTENTOS).toBe(3);
+    expect(CONFIG_RECORRIDO.BLUETOOTH_INTERVALO_MS).toBe(2000);
+    expect(CONFIG_RECORRIDO.FACTORES_ACELERACION).toEqual([1, 10, 30]);
+    expect(CONFIG_RECORRIDO.CONSUMO_BATERIA_POR_KM_PCT).toBe(4);
+    expect(CONFIG_RECORRIDO.CALORIAS_POR_KM_KCAL).toBe(35);
+    expect(CONFIG_RECORRIDO.VELOCIDAD_ESTIMADA_KMH).toBe(12);
+    expect(CONFIG_RECORRIDO.VELOCIDAD_VARIACION_KMH).toBe(2);
+    expect(CONFIG_RECORRIDO.STORAGE_KEY_HISTORIAL).toBe("triciclos.historial.v1");
+    expect(CONFIG_RECORRIDO.STORAGE_KEY_EN_CURSO).toBe("triciclos.recorridoEnCurso.v1");
+  });
+});

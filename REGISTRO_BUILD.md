@@ -1,0 +1,13 @@
+# Registro de Build — Prototipo Realizar Recorrido
+
+| Tarea | Fecha | Archivos Modificados / Creados | Requisito / TC Cubierto | Comandos Ejecutados | Resultado |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| T00 | 17/11/2026 | package.json, tsconfig.json, vite.config.ts, index.html, src/main.tsx, src/App.tsx, src/test/smoke.test.tsx, src/test/setup.ts, .gitignore, README.md, REGISTRO_BUILD.md | NF-05 / TC-21 | nvm use 22, npm install, npm test, npm run build | Exitoso (tests pasados y build generado en dist/) |
+| T01 | 18/11/2026 | src/domain/tipos.ts, src/domain/config.ts, src/domain/config.test.ts, REGISTRO_BUILD.md | Secciones 4.2, 5, 6.3 / D-02, D-03, D-04, D-05, D-06, D-08, D-10, D-14, D-15, D-17, D-19 | npm test, npm run build | Exitoso (tests aprobados, build generado) |
+| T02 | 18/11/2026 | src/domain/maquinaRecorrido.ts, src/domain/maquinaRecorrido.test.ts, REGISTRO_BUILD.md | Sección 4.2 / CU_01 / TC-20 | npm test, npm run build | Exitoso (tests aprobados, build generado) |
+| T10 (UI) | 18/11/2026 | src/App.tsx, src/components/EstadoVehiculoBar.tsx, src/components/SelectorModalidad.tsx, src/components/ConfiguracionRecorrido.tsx, REGISTRO_BUILD.md | CU_01 / TC-01, TC-02, TC-18 | npm test, npm run build | Exitoso (tests aprobados, build generado) |
+| T04 (Etapa 2) | 18/11/2026 | src/services/catalogo.ts, src/services/catalogo.test.ts, src/components/ConfiguracionRecorrido.tsx, src/App.tsx, REGISTRO_BUILD.md | RF-04 / TC-03 | npm test, npm run build | Exitoso (tests aprobados, build generado) |
+| Validacion | 18/11/2026 | REGISTRO_BUILD.md | Verificación general / TC-01 a TC-25, CU_01, RFs, RNFs | npm test, npm run lint, npm run build | Exitoso (23 tests pasados, lint limpio, build de producción exitoso) |
+| IntegracionFinal | 18/11/2026 | src/App.tsx, REGISTRO_BUILD.md | CU_01 / Integración de pantallas (Configuración, Seguimiento, Resumen, Emergencia, Simulación) | nvm use 22, npm test, npm run build | Exitoso (23 tests aprobados, build de producción generado en dist/) |
+| FixBateriaAlerta | 18/11/2026 | src/components/PantallaSeguimiento.tsx, REGISTRO_BUILD.md | RF-07 / TC-04, TC-08 (Asistencia Híbrida pasa a INACTIVA al confirmar alerta de batería) | nvm use 22, npm test, npm run build | Exitoso (23 tests aprobados, build generado) |
+| FixBateriaRecuperacion | 18/11/2026 | src/components/PantallaSeguimiento.tsx, REGISTRO_BUILD.md | RF-07 / TC-04, TC-08 (Asistencia Híbrida vuelve a ACTIVA y se limpia alerta al subir batería > 20%) | nvm use 22, npm test, npm run build | Exitoso (23 tests aprobados, build generado) |
