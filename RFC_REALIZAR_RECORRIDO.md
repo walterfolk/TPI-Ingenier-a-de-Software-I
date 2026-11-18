@@ -1,4 +1,4 @@
-# RFC Técnico: Spec 1 - Realizar Recorrido / Prototipo (Versión Informal)
+# RFC Técnico: Spec 1 - Realizar Recorrido / Prototipo
 
 ## Prototipo web responsive del caso de uso CU_01 Realizar recorrido con hardware y servicios simulados
 
