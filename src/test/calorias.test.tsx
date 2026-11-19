@@ -1,0 +1,20 @@
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
+import { afterEach, expect, it } from 'vitest';
+import App from '../App';
+afterEach(cleanup);
+it('TC-30/D-28: calorías siempre visibles en el recorrido; BPM se suma con dispositivo vinculado', () => {
+  render(<App />);
+  fireEvent.click(screen.getByText(/Panel de Simulación/));
+  fireEvent.click(screen.getByRole('button', { name: 'Iniciar Recorrido' }));
+  const tablero = within(screen.getByRole('region', { name: 'Métricas principales y controles' }));
+  expect(tablero.getByRole('figure', { name: 'Frecuencia cardíaca' })).toHaveTextContent('125 bpm');
+  expect(tablero.getByRole('figure', { name: 'Calorías' })).toHaveTextContent('kcal');
+  expect(tablero.getAllByRole('figure')).toHaveLength(7);
+  fireEvent.click(screen.getByRole('button', { name: 'Vinculado' }));
+  expect(tablero.queryByRole('figure', { name: 'Frecuencia cardíaca' })).not.toBeInTheDocument();
+  expect(tablero.getByRole('figure', { name: 'Calorías' })).toHaveTextContent('kcal');
+  expect(tablero.getAllByRole('figure')).toHaveLength(6);
+  fireEvent.click(screen.getByRole('button', { name: 'No vinculado' }));
+  expect(tablero.getByRole('figure', { name: 'Frecuencia cardíaca' })).toBeInTheDocument();
+  expect(tablero.getByRole('figure', { name: 'Calorías' })).toBeInTheDocument();
+});
