@@ -181,7 +181,7 @@ export default function App() {
         />
       )}
 
-      {pantalla === 'SEGUIMIENTO' && estadoBar}
+      {pantalla === 'SEGUIMIENTO' && <EstadoVehiculoBar bateriaPct={bateriaPct} climaActual={climaActual} bluetoothSincronizado={conexion.estado === 'CONECTADO'} smartwatchVinculado={smartwatchVinculado} soloVinculos />}
 
       {pantalla === 'RESUMEN' && recorridoTerminado && (
         <PantallaResumen

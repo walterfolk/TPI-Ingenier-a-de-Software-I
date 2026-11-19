@@ -61,9 +61,9 @@ describe('T-02a — estado simulado compartido (TC-01/02/03)', () => {
       fireEvent.click(screen.getByRole('button', { name: modalidad }));
       fireEvent.click(screen.getByRole('button', { name: 'Iniciar Recorrido' }));
 
-      expect(barra().getByText('55%')).toBeInTheDocument();
+      expect(barra().queryByText('55%')).not.toBeInTheDocument(); // D-27: sin batería duplicada durante el recorrido
       expect(seguimiento().getByText('55%')).toBeInTheDocument();
-      expect(seguimiento().getByText('NUBLADO')).toBeInTheDocument();
+      expect(seguimiento().getByText('Nublado')).toBeInTheDocument();
       expect(seguimiento().getByText('140 bpm')).toBeInTheDocument();
       expect(seguimiento().getByText('Desconectado')).toBeInTheDocument();
       expect(screen.getByRole('slider', { name: 'Velocidad simulada' })).toHaveValue('18');
@@ -98,10 +98,10 @@ describe('T-02a — estado simulado compartido (TC-01/02/03)', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: 'Vinculado' }));
     fireEvent.click(screen.getByRole('button', { name: 'Conectado' }));
-    expect(barra().getByText('45%')).toBeInTheDocument();
+    expect(barra().queryByText('45%')).not.toBeInTheDocument();
     expect(seguimiento().getByText('45%')).toBeInTheDocument();
-    expect(barra().getByText('Nublado')).toBeInTheDocument();
-    expect(seguimiento().getByText('NUBLADO')).toBeInTheDocument();
+    expect(barra().queryByText('Nublado')).not.toBeInTheDocument(); // D-27: clima solo arriba
+    expect(seguimiento().getByText('Nublado')).toBeInTheDocument();
     expect(barra().getByText('No vinculado')).toBeInTheDocument();
     expect(seguimiento().queryByText(/125 bpm/)).not.toBeInTheDocument();
     expect(barra().getByText('Desconectado')).toBeInTheDocument();
@@ -125,7 +125,7 @@ describe('T-02a — estado simulado compartido (TC-01/02/03)', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Iniciar Recorrido' }));
     expect(screen.getByRole('slider', { name: 'Batería del triciclo' })).toHaveValue(bateriaConservada);
-    expect(seguimiento().getByText('NUBLADO')).toBeInTheDocument();
+    expect(seguimiento().getByText('Nublado')).toBeInTheDocument();
     expect(seguimiento().getByText('Desconectado')).toBeInTheDocument();
     expect(barra().getByText('No vinculado')).toBeInTheDocument();
     expect(seguimiento().getByText('0:00')).toBeInTheDocument();

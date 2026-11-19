@@ -79,3 +79,13 @@ La alerta Bluetooth flotante deja visibles las seis métricas y las acciones cr�
 Cambio puntual solicitado y autorizado por el usuario: retirar el botón de medición y su resultado del panel de simulación. Se eliminan únicamente el import, el estado de resultado y el bloque JSX asociado en src/components/PanelSimulacion.tsx. Los controles de sensores, props, expansión del panel y lógica del recorrido se conservan. No se modifica RFC/SPEC/UML ni servicios; el módulo de medición queda sin importar desde la aplicación y fuera del nuevo bundle. No se agregan requisitos ni TC: retiro de instrumentación auxiliar, con regresión existente de TC-05/TC-11 y controles compartidos.
 
 Comandos: `npm test -- --maxWorkers=4 --minWorkers=1` (71/71 en 19 archivos, código 0); `npm run lint` (TypeScript correcto); `npm run build` (correcto, 51 módulos, index-GkJdfLye.js y CSS sin cambios). Sin nuevas pruebas para este retiro puntual. Únicos archivos de fuente/documentación modificados en esta tarea: PanelSimulacion.tsx y REGISTRO_BUILD.md; dist regenerado. Sin nuevas dependencias, decisiones funcionales ni cierre de Gate 3.
+
+## 19/11/2026 — D-27 (propuesta pendiente de aprobación del equipo)
+
+- RFC v0.4 actualizado antes del código (4.4 ajustes a–d, D-27, TC-28, TC-29).
+- Clima: 7 pictogramas nuevos (`Icono.tsx`), tarjeta `metrica-clima` con dibujo de 72 px y texto en español de 16 px (`components/clima.ts`).
+- Barra inferior en recorrido: sin batería ni clima (`soloVinculos`); Bluetooth y smartwatch como íconos sin texto visible. En configuración la barra queda completa.
+- Voz: causa probable de “solo pitido”: `speak()` inmediatamente después de `cancel()` (React StrictMode reinicia el efecto) y enunciado sin referencia. Ahora la voz se difiere 250 ms y se conserva el enunciado (`services/audio.ts`).
+- Tests: 4 aserciones de `estadoCompartido.test.tsx` pasan de “la barra muestra batería/clima” a “la barra ya no los duplica” (cambio de requisito); `audio.test.ts` avanza el retardo; 2 tests nuevos en `pictogramas.test.tsx`. Total 73.
+- Pendiente: prueba auditiva y visual en Chrome.
+- 19/11/2026 (2.ª corrección de voz): el usuario informó que seguía sin hablar. Se compara con `AudioService.ts` del primer prototipo: allí la voz se dice una vez y sin guardia `speaking`. Se elimina la guardia y la repetición de voz, se añade `resume()` y se mantiene el retardo y la referencia al enunciado. En Chrome headless se verifica que `speak()` se invoca con el texto de la alerta; la audición real queda a cargo del usuario.

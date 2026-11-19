@@ -12,6 +12,16 @@ const trazos = {
   brujula: 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20M16 8l-3 5-5 3 3-5 5-3',
   ubicacion: 'M19 9c0 5-7 12-7 12S5 14 5 9a7 7 0 0 1 14 0M12 6a3 3 0 1 0 0 6 3 3 0 0 0 0-6',
   mapa: 'M3 5l6-3 6 3 6-3v17l-6 3-6-3-6 3V5M9 2v17M15 5v17',
+  sol: 'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4',
+  nube: 'M6 18a4 4 0 0 1-1-8 7 7 0 0 1 13-1 4.5 4.5 0 0 1 0 9H6',
+  lluvia: 'M6 14a4 4 0 0 1-1-7 7 7 0 0 1 13-1 4.5 4.5 0 0 1 0 8H6M8 17l-1 3M12 17l-1 3M16 17l-1 3',
+  viento: 'M3 8h10a3 3 0 1 0-3-3M3 12h15a3 3 0 1 1-3 3M3 16h7',
+  hielo: 'M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7M9 4l3 2 3-2M9 20l3-2 3 2',
+  vientoFuerte: 'M2 6h11a3 3 0 1 0-3-3M2 10h17a3 3 0 1 1-3 3M2 14h8a3 3 0 1 1-3 3M2 18h4',
+  tormenta: 'M6 13a4 4 0 0 1-1-7 7 7 0 0 1 13-1 4.5 4.5 0 0 1 0 8M13 11l-3 5h4l-3 5',
+  bluetooth: 'M7 7l10 10-5 4V3l5 4L7 17',
+  smartwatch: 'M8 3h8l1 4H7l1-4M7 17h10l-1 4H8l-1-4M7 7h10v10H7V7M12 10v3l2 1',
+  smartwatchNo: 'M8 3h8l1 4H7l1-4M7 17h10l-1 4H8l-1-4M7 7h10v10H7V7M3 3l18 18',
 };
 export type NombreIcono = keyof typeof trazos;
 export function Icono({ nombre }: { nombre: NombreIcono }) {

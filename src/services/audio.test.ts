@@ -14,6 +14,7 @@ it('TC-23/10: cada tipo usa pitido y voz española; confirmar detiene voz y repe
   const audio = crearAudioAlertas();
   for (const mensaje of ['Batería baja', 'Clima adverso', 'Terreno peligroso', 'Pulso elevado']) {
     audio.iniciar([mensaje]);
+    vi.advanceTimersByTime(300);
     expect(speak).toHaveBeenLastCalledWith(expect.objectContaining({ text: mensaje, lang: 'es-AR' }));
     expect(start).toHaveBeenCalled();
     audio.detener();

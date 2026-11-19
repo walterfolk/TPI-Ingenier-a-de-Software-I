@@ -1,6 +1,7 @@
 import React from 'react';
 import { Icono } from './Icono';
 import { Metrica } from './Metrica';
+import { ICONO_CLIMA, ETIQUETA_CLIMA } from './clima';
 import { useRecorrido, type PantallaSeguimientoProps } from '../hooks/useRecorrido';
 import { PantallaEmergencia } from './PantallaEmergencia';
 import { ModalValidacionFin } from './ModalValidacionFin';
@@ -57,7 +58,7 @@ export function PantallaSeguimiento(props: PantallaSeguimientoProps) {
           <Metrica nombre="Distancia recorrida" icono="ruta" valor={(distanciaMetros / 1000).toFixed(2) + ' km'} />
           <Metrica nombre="Tiempo activo" icono="reloj" valor={Math.floor(tiempoActivoSeg / 60) + ':' + Math.floor(tiempoActivoSeg % 60).toString().padStart(2, '0')} />
           <Metrica nombre="Batería del triciclo" icono="bateria" valor={Math.round(bateriaPct) + '%'} />
-          <Metrica nombre="Clima" icono="clima" valor={climaActual} />
+          <Metrica nombre="Clima" icono={ICONO_CLIMA[climaActual]} valor={ETIQUETA_CLIMA[climaActual]} clase="metrica-clima" />
           {smartwatchVinculado ? <Metrica nombre="Frecuencia cardíaca" icono="pulso" valor={frecuenciaCardiaca + ' bpm'} /> : <Metrica nombre="Calorías" icono="calorias" valor={caloriasConsumidas.toFixed(1) + ' kcal'} />}
         </div>
         <div className="controles-marcha">
