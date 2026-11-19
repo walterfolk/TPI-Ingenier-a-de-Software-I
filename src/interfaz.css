@@ -431,3 +431,22 @@ body:has(.conductor[data-tema="oscuro"]) { background: #101c24; }
     .en-marcha .tablero-marcha .metricas-7 .metrica-valor { font-size: 19px; }
   }
 }
+
+/* ---- CU-02 Filtrar recorridos (Parte II, D-32): botón en el panel principal y subpanel de filtros. ---- */
+.modalidades .boton-filtros { justify-content: center; padding: 12px 18px; border-radius: 14px; border-style: dashed; color: var(--acento); box-shadow: none; gap: 10px; }
+.modalidades .boton-filtros .icono { width: 26px; height: 26px; }
+.modalidades .boton-filtros[aria-expanded="true"] { background: var(--acento-suave); border-style: solid; border-color: var(--acento); }
+.modalidades .boton-filtros[aria-expanded="true"]::after { content: none; }
+.panel-filtros { display: flex; flex-direction: column; gap: 14px; padding: 16px; background: var(--suave); border: 1px solid var(--borde); border-radius: 14px; min-width: 0; }
+.criterios-filtro { display: grid; grid-template-columns: minmax(0,1fr); gap: 12px; }
+.criterios-filtro select { background: var(--panel); }
+.acciones-filtro { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
+.acciones-filtro button { min-width: 0; padding-inline: 10px; }
+.campo-circuito { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.campo-circuito .resultado-filtro { color: var(--acento); background: var(--acento-suave); border: 0; padding: 10px 12px; border-radius: 10px; font-size: 13px; font-weight: 650; margin-bottom: 8px; }
+.campo-circuito .resultado-filtro.sin-resultados { color: var(--aviso); background: var(--aviso-fondo); }
+@media (min-width: 700px) {
+  .criterios-filtro { grid-template-columns: repeat(3,minmax(0,1fr)); }
+}
+.campo-circuito .detalle-circuito { color: var(--secundario); font-size: 13px; margin-top: 8px; overflow-wrap: anywhere; }
+.campo-circuito .detalle-circuito strong { color: var(--texto); }

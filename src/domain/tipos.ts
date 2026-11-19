@@ -1,5 +1,15 @@
 export type ModalidadRecorrido = "LIBRE" | "PERSONALIZADO" | "PRECARGADO";
 
+/** RNF-12: niveles de dificultad de los recorridos precargados (CU-02). */
+export type DificultadRecorrido = "BAJA" | "MEDIA" | "ALTA";
+
+/** CU-02 / RNF-12 (D-30): un criterio ausente significa «Cualquiera». */
+export interface FiltroRecorridos {
+  distancia?: "HASTA_5" | "HASTA_10" | "HASTA_15" | "MAS_15";
+  calorias?: "HASTA_150" | "HASTA_300" | "HASTA_500" | "MAS_500";
+  dificultad?: DificultadRecorrido;
+}
+
 export type EstadoRecorrido =
   | "PREPARADO"
   | "EN_CURSO"

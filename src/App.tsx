@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useConexionSimulada } from './hooks/useConexionSimulada';
 import { prepararAudio } from './services/audio';
-import type { CondicionClima, EstadoVehiculoMovil, IntensidadClima, ModalidadRecorrido, RecorridoGuardado } from './domain/tipos';
+import type { CondicionClima, EstadoVehiculoMovil, FiltroRecorridos, IntensidadClima, ModalidadRecorrido, RecorridoGuardado } from './domain/tipos';
 import { Icono } from './components/Icono';
 import { EstadoVehiculoBar } from './components/EstadoVehiculoBar';
 import { SelectorModalidad } from './components/SelectorModalidad';
@@ -10,7 +10,8 @@ import { PantallaSeguimiento } from './components/PantallaSeguimiento';
 import { PantallaResumen } from './components/PantallaResumen';
 import { PanelSimulacion } from './components/PanelSimulacion';
 import { guardarRecorridoHistorial } from './services/storage';
-import { CIRCUITOS_PRECARGADOS } from './services/catalogo';
+import { CIRCUITOS_PRECARGADOS, filtrarCircuitos } from './services/catalogo';
+import { PanelFiltros } from './components/PanelFiltros';
 
 type PantallaApp = 'CONFIGURACION' | 'SEGUIMIENTO' | 'RESUMEN';
 
@@ -24,6 +25,14 @@ export default function App() {
   const [pantalla, setPantalla] = useState<PantallaApp>('CONFIGURACION');
   useEffect(() => { window.scrollTo(0, 0); }, [pantalla]);
   const [modalidad, setModalidad] = useState<ModalidadRecorrido>('LIBRE');
+  // CU-02 (D-31/D-32): filtro aplicado con «Buscar»; null = sin búsqueda (listado completo). No se persiste.
+  const [filtrosAbiertos, setFiltrosAbiertos] = useState(false);
+  const [filtroAplicado, setFiltroAplicado] = useState<FiltroRecorridos | null>(null);
+  const reiniciarFiltros = () => { setFiltrosAbiertos(false); setFiltroAplicado(null); };
+  const handleFiltrarRecorridos = () => {
+    if (modalidad !== 'PRECARGADO') { setModalidad('PRECARGADO'); setFiltrosAbiertos(true); return; }
+    setFiltrosAbiertos(abierto => !abierto);
+  };
 
   // Una misma fuente simulada antes y durante el recorrido.
   const [bateriaPct, setBateriaPct] = useState(80);
@@ -81,6 +90,7 @@ export default function App() {
   const handleCancelarOdescartar = () => {
     setAvisoDescarte(true);
     setConfiguracionActual(null);
+    reiniciarFiltros();
     setPantalla('CONFIGURACION');
   };
 
@@ -96,6 +106,7 @@ export default function App() {
     setFrecuenciaCardiaca(125);
     setBluetoothSincronizado(true);
     setVelocidadSimulada(12);
+    reiniciarFiltros();
     setPantalla('CONFIGURACION');
   };
 
@@ -152,6 +163,8 @@ export default function App() {
           <SelectorModalidad
             modalidadSeleccionada={modalidad}
             onSelectModalidad={setModalidad}
+            filtrosAbiertos={filtrosAbiertos && modalidad === 'PRECARGADO'}
+            onFiltrarRecorridos={handleFiltrarRecorridos}
           />
 
           <ConfiguracionRecorrido
@@ -160,6 +173,9 @@ export default function App() {
             modalidad={modalidad}
             bateriaPct={bateriaPct}
             onIniciar={handleIniciar}
+            circuitos={filtroAplicado ? filtrarCircuitos(filtroAplicado) : CIRCUITOS_PRECARGADOS}
+            busquedaRealizada={filtroAplicado !== null}
+            panelFiltros={filtrosAbiertos && <PanelFiltros filtroAplicado={filtroAplicado} onBuscar={setFiltroAplicado} onLimpiar={() => setFiltroAplicado({})} />}
           />
         </>
       )}

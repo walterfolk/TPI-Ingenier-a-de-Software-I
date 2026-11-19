@@ -115,3 +115,27 @@ Comandos: `npm test -- --maxWorkers=4 --minWorkers=1` (71/71 en 19 archivos, có
 - Build: `PantallaSeguimiento.tsx` muestra BPM solo con vínculo y Calorías siempre; con vínculo el tablero lleva la clase `metricas-7`. `interfaz.css` (bloque D-28): escritorio/tablet 4×2 con Clima como columna alta a la derecha; móvil vertical y bajo 2×4 con Clima a todo el ancho (pictograma al costado del texto); horizontal 7×1. Sin vínculo el layout no cambia. Configuración y resumen sin cambios. Test nuevo `src/test/calorias.test.tsx` (TC-30).
 - Validate: `npm test` (74/74 en 21 archivos), `npm run lint` y `npm run build` correctos. Chrome headless (playwright-core temporal en el scratchpad, sin dependencias nuevas del proyecto): 195 casos = Libre/Personalizado/Precargado × {vinculado, sin vínculo, Bluetooth desconectado con aviso, alerta de batería} × 13 resoluciones (320×568, 360×800, 375×667, 393×852, 412×915, 667×375, 740×360, 852×393, 768×1024, 1024×768, 1280×800, 1440×900, 1920×1080) + tema oscuro con vínculo. Se verifica: sin scroll vertical/horizontal del documento, tarjetas, controles, estado del recorrido, barra de vínculos y cabecera del panel QA dentro del viewport, sin desborde interno de tarjetas, cantidad de tarjetas (6/7) y ninguna celda vacía en la grilla. Primera corrida: 12 fallas en 667×375 (tarjetas en fila por la regla de móvil bajo); corregido con columna en horizontal; segunda corrida 0 fallas. Capturas inspeccionadas.
 - Trazabilidad: D-28, RF-18, CU-01; TC-30 y regresión de TC-06/07/26/27. Archivos: `RFC_REALIZAR_RECORRIDO.md`, `src/components/PantallaSeguimiento.tsx`, `src/interfaz.css`, `src/test/calorias.test.tsx`, este registro y `dist/` regenerado.
+
+## 19/11/2026 — feat/cu-02: PLAN del CU-02 «Filtrar recorridos» (RFC v0.6 en revisión)
+
+- Plan: rama `feat/cu-02`. Análisis de `docs/CASO_ DE_USO_FILTRAR_RECORRIDOS`, de `docs/Entrega 4.pdf` (RF-05 p. 3, RNF-12 p. 7, SPEC Filtrar recorridos pp. 14–16) y del diagrama de comunicación de `docs/Diagrama de clase-FINAL- CU_02 Filtrar Recorridos.drawio.svg`. `docs/SPEC_FILTRAR_RECORRIDOS` está vacío. El usuario resolvió las dudas: rangos acumulativos (D-30), Buscar sin filtros y «Limpiar filtros» (D-31), 8 circuitos de ejemplo con kcal = km × 35 y botón en el panel principal (D-32).
+- RFC v0.6: se agrega la Parte II (II.1 a II.9: TC-31 a TC-40, D-29 a D-32, T-14 a T-18), notas «Superado en v0.6 (D-29)» junto a los textos de la Parte I que declaraban el CU-02 fuera de alcance, fila de historial y checklist. Ningún contenido de la Parte I se eliminó: se verificó por script que todas las líneas originales sigan presentes; la única reemplazada es la celda de versión.
+- Sin cambios de código. Build y validación quedan pendientes del Gate 1 del CU-02.
+
+## 19/11/2026 — feat/cu-02: BUILD y VALIDATE del CU-02 (T-14 a T-18)
+
+- Gate 1: el usuario aprobó la Parte II del RFC v0.6 en el chat. D-29 a D-32 pasan a «Aprobado».
+- T-14: `domain/tipos.ts` (`DificultadRecorrido`, `FiltroRecorridos`) y `services/catalogo.ts` (campo `dificultad`, 8 circuitos de ejemplo, `filtrarCircuitos`). c1–c3 conservan id, distancia y terreno.
+- T-15: `domain/filtros.ts` (`OPCIONES_FILTRO`, `caloriasEstimadas`, `cumpleFiltro`, `filtrarRecorridos`) y `domain/filtros.test.ts`.
+- T-16: `SelectorModalidad.tsx` (botón «Filtrar recorridos» con `aria-expanded`/`aria-controls`), `PanelFiltros.tsx` nuevo, ícono `filtro` en `Icono.tsx` y estilos en `interfaz.css`.
+- T-17: `App.tsx` (estado del filtro, que se resetea al volver al inicio o al descartar) y `ConfiguracionRecorrido.tsx` (lista filtrada con kcal y dificultad, contador de resultados, mensaje 5.A, sin estimaciones ni inicio sin circuito). Prueba de UI `src/test/filtros.test.tsx` (TC-31 a TC-40). `src/test/temas.test.tsx` se ajustó por el cambio de requisito D-29.
+- T-18 / Validate: `npm test` (87/87 en 23 archivos), `npm run lint` (sin errores) y `npm run build` (correcto). Chrome headless con playwright-core temporal en el scratchpad, sin dependencias nuevas:
+  - Configuración: 104 casos (13 resoluciones de 320×568 a 1920×1080 × claro/oscuro × {cerrado, subpanel abierto, con resultados, 5.A}). Sin desborde horizontal ni elementos fuera de su contenedor.
+  - Regresión de la pantalla de recorrido (D-28): 195 casos, sin scroll ni desbordes.
+  - Capturas revisadas. Ajustes posteriores a la revisión visual: línea de dificultad y ocultamiento de estimaciones en 5.A.
+- Trazabilidad: CU-02 (1–5, 5.A), CU-01 3.A, RF-05, RNF-12, CA2-01 a CA2-08; TC-31 a TC-40 y regresión TC-01 a TC-30. Archivos: los listados arriba, `RFC_REALIZAR_RECORRIDO.md`, este registro y `dist/`.
+
+## 19/11/2026 — feat/cu-02: relectura de la SPEC y el CU del CU-02
+
+- `docs/SPEC_FILTRAR_RECORRIDOS`, antes vacío, fue completado por el equipo. Se comparó por script contra la SPEC de `docs/Entrega 4.pdf` (pp. 14–16) y el texto es idéntico palabra por palabra; solo falta la sección «Decisiones abiertas», que D-31 ya resuelve. `docs/CASO_ DE_USO_FILTRAR_RECORRIDOS` no cambió.
+- Conclusión: no hace falta repetir RFC → BUILD. En el RFC v0.6 solo se agregaron notas sobre el archivo completado y se cerró el riesgo de II.8.2, sin borrar texto. Sin cambios de código; la suite sigue en 87/87.

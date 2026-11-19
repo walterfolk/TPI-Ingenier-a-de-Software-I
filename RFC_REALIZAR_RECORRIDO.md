@@ -1,16 +1,16 @@
 # RFC Técnico: Spec 1 - Realizar Recorrido / Prototipo
 
-## Prototipo web responsive de la app del conductor para el CU N.º 1 "Realizar recorrido" (con hardware y servicios simulados)
+## Prototipo web responsive de la app del conductor para el CU N.º 1 "Realizar recorrido" (con hardware y servicios simulados) — extendido en v0.6 con el CU N.º 2 "Filtrar recorridos"
 
 | Campo               | Detalle                                                         |
 | :------------------ | :-------------------------------------------------------------- |
-| **Título**          | RFC-SPEC 1: Realizar recorrido                                  |
+| **Título**          | RFC-SPEC 1: Realizar recorrido · Parte II (v0.6): RFC-SPEC 2: Filtrar recorridos |
 | **Proyecto**        | Sistema de triciclos UNTDF / Nicolas Easdale                    |
 | **Materia / Grupo** | Ingeniería de Software I — Grupo 1                              |
 | **Integrantes**     | Cerezo Marcos, Folk Walter, González Gabriela, Tamargo Jeremías |
 | **Fecha**           | 18/11/2026 |
-| **Versión**         | 0.5 (D-28 propuesto; D-27 aprobado) |
-| **Estado**          | Aprobado |
+| **Versión**         | 0.6 (Parte II CU-02 aprobada 19/11/2026; v0.5 aprobada para CU-01) |
+| **Estado**          | Aprobado (CU-01, Parte I) · Aprobado (CU-02, Parte II: Gate 1 aprobado 19/11/2026) |
 | **Fecha de actualización** | 19/11/2026 |
 | **Revisores**       | D’Uva Ivan, Lemos José, Moyano Ezequiel                         |
 
@@ -21,6 +21,8 @@
 **Diagramas de referencia comprobados:** `docs/diagrama de clases.svg`, `docs/diagrama secuencia.svg`, `docs/Diagrama_Actividad.svg`, `docs/maquinas-estado.svg`. Se revisaron las etiquetas de las vistas SVG exportadas de draw.io. No existe `docs/diagramas/` ni `docs/documento_de_prototipo.pdf` mencionado en AGENTS.md. No hay exportación separada de comunicación; las páginas adicionales del XML incrustado no se presuponen versiones vigentes independientes.
 
 **Base de revisión:** evolución del contenido v0.2 existente al inicio, sin restaurar el RFC de la implementación. Inspección estática de todos los archivos de `src/`, pruebas, dependencias, configuración y registro histórico. No se ejecutaron tests, build ni validación funcional en PLAN. Las observaciones de código no certifican ejecución. Durante PLAN se mantuvieron D-01 a D-04 y D-11 decididas y el resto como propuestas; la aprobación humana posterior queda registrada en 9.1. Las observaciones de PLAN se conservan como línea de base histórica.
+
+**Extensión v0.6 (19/11/2026):** se agrega la **Parte II — CU N.º 2: Filtrar recorridos** (al final, antes del Historial), con fuentes en `docs/CASO_ DE_USO_FILTRAR_RECORRIDOS`, `docs/Entrega 4.pdf` (RF-05 p. 3, RNF-12 p. 7, SPEC «Filtrar recorridos» pp. 14–16) y `docs/Diagrama de clase-FINAL- CU_02 Filtrar Recorridos.drawio.svg`. `docs/SPEC_FILTRAR_RECORRIDOS` está vacío; manda el PDF. La Parte I (CU-01) se conserva íntegra; los textos superados llevan la nota «Superado en v0.6 (D-29)».
 
 ---
 
@@ -46,7 +48,7 @@ El objetivo es cubrir el CU N.º 1 de punta a punta desde la app del conductor, 
 | Gestor de emergencias                  | Simulado                           | Solo la pantalla de emergencia con el botón "Cancelar" (non-goal de la spec: el procedimiento completo del CU N.º 8 queda afuera).                                           |
 | Gestor de historial                    | Real (solo registro)               | Se guardan los recorridos válidos. La consulta y gestión del historial es non-goal de la spec.                                                                               |
 | Persistencia                           | Real (local)                       | `localStorage` del navegador: datos del recorrido en curso (RNF-07) e historial. No hay base de datos ni servidor.                                                            |
-| Filtro de recorridos (CU N.º 2)        | Fuera de alcance                   | Es otra spec. Ver decisión D-02 en 9.1.                                                                                                                                       |
+| Filtro de recorridos (CU N.º 2)        | Fuera de alcance                   | Es otra spec. Ver decisión D-02 en 9.1. **Superado en v0.6 (D-29):** el CU-02 se incorpora; ver Parte II. |
 | Backend / API / plataforma web admin   | Fuera de alcance                   | La lógica corre en el navegador.                                                                                                                                              |
 
 ### 1.1 Alternativas evaluadas
@@ -67,7 +69,7 @@ Motivo: se prioriza reducir la complejidad técnica y los tiempos de desarrollo 
 
 ### 1.2 Requisitos fuera del alcance de esta spec
 
-Se mantienen fuera de alcance RF-08 y RNF-17 (límite de velocidad; el control QA actual admite hasta 30 km/h, sin afirmar un límite implementado de 24), RNF-13 y RNF-25 (service obligatorio), RNF-23 (carga automática), RNF-24 (antirrobo), RNF-26 (peso) y la navegación GPS paso a paso. RNF-27 sí cubre alertas de terreno en precargados. **RNF-15 vuelve al alcance porque el SPEC actualizado lo incluye**; incluye modos claro/oscuro y predominio gráfico 70% frente a un máximo de 30% de texto (Entrega 4, p. 7). D-23 registra el método de áreas y la paleta neutra aprobados por el equipo.
+Se mantienen fuera de alcance RF-08 y RNF-17 (límite de velocidad; el control QA actual admite hasta 30 km/h, sin afirmar un límite implementado de 24), RNF-13 y RNF-25 (service obligatorio), RNF-23 (carga automática), RNF-24 (antirrobo), RNF-26 (peso) y la navegación GPS paso a paso. RNF-27 sí cubre alertas de terreno en precargados. **RNF-15 vuelve al alcance porque el SPEC actualizado lo incluye**; incluye modos claro/oscuro y predominio gráfico 70% frente a un máximo de 30% de texto (Entrega 4, p. 7). D-23 registra el método de áreas y la paleta neutra aprobados por el equipo. *En v0.6, RF-05 y RNF-12 (CU-02) entran al alcance en la Parte II (D-29).*
 
 ### 1.3 Contraste SPEC ↔ UML ↔ RFC ↔ implementación
 
@@ -181,7 +183,7 @@ El grafo conserva dependencias relevadas en PLAN. Tras BUILD, PantallaSeguimient
 | src/App.tsx | Navegación y callback de guardado. | Conservar; compartir estado simulado con configuración, barra y seguimiento. |
 | src/components/ConfiguracionRecorrido.tsx | Puntos/circuitos y estimaciones. | Conservar; validar y presentar condiciones previas antes de iniciar. |
 | src/components/EstadoVehiculoBar.tsx | Valores fijos. | Recibir props de la misma fuente del seguimiento. |
-| src/components/SelectorModalidad.tsx | Modalidades y botón filtro con aviso. | Conservar selección y ocultar filtro según D-02; no implementar CU-02. |
+| src/components/SelectorModalidad.tsx | Modalidades y botón filtro con aviso. | Conservar selección y ocultar filtro según D-02; no implementar CU-02. **Superado en v0.6 (D-29):** el CU-02 se incorpora; ver Parte II. Se agrega el botón «Filtrar recorridos». |
 | src/components/PantallaSeguimiento.tsx | Intervalos, sensores, métricas, alertas, controles y fin. | Extraer coordinación a src/hooks/useRecorrido.ts (nuevo propuesto), usando reglas y máquina existentes; conservar vista. |
 | src/components/PanelSimulacion.tsx | QA de batería/clima/velocidad/vínculo/BPM/Bluetooth. | Reutilizar también antes de iniciar; controles adicionales solo para TC previstos. |
 | src/components/ModalValidacionFin.tsx y PantallaResumen.tsx | Validez, confirmación y resumen. | Mantener; corregir datos y mensajes de éxito/descarte. |
@@ -408,7 +410,7 @@ flowchart LR
 | `Recorrido` (abstracta)                   | Tipo `Recorrido` y unión `ModalidadRecorrido` en `domain/tipos.ts`          | Sin herencia: la modalidad es un campo. `tiempoTranscurrido` se guarda como `tiempoActivoSeg` (segundos, sin pausas).  |
 | `RecorridoLibre`                          | `modalidad: "LIBRE"`                                                        | `modoLibre`, `marcarInicio` y `marcarFin` se resuelven con iniciar y finalizar.                                        |
 | `RecorridoPersonalizado`                  | `modalidad: "PERSONALIZADO"` con `origen` y `destino`                       | Sin cambios de atributos. En la interfaz se llama «Destino Personalizado» (D-03).                                      |
-| `RecorridosOficiales`                     | `modalidad: "PRECARGADO"`; datos en `services/catalogo.ts`                  | Se renombra «Precargado» por D-03. `filtrarPor` y `cumpleFiltro` no se implementan: pertenecen a la spec de filtros.   |
+| `RecorridosOficiales`                     | `modalidad: "PRECARGADO"`; datos en `services/catalogo.ts`                  | Se renombra «Precargado» por D-03. `filtrarPor` y `cumpleFiltro` no se implementan: pertenecen a la spec de filtros. **Superado en v0.6 (D-29):** el CU-02 se incorpora; ver Parte II. `filtrarPor`/`cumpleFiltro` se implementan como funciones de dominio (II.5). |
 | `PuntoDeReferencia`                       | Tipo `PuntoReferencia` en `catalogo.ts`                                     | Se agregan coordenadas `x` e `y` (km) para estimar distancias (D-15).                                                  |
 | `Alerta`                                  | Tipo `Alerta` en `domain/tipos.ts`                                          | Se agrega `tipo` (batería, clima, terreno, frecuencia cardíaca, Bluetooth) y `confirmada`.                             |
 | `EmitirAlerta`                            | `services/alertas.ts`                                                       | Interfaz resuelta como funciones; `enviarUbicacion` no se implementa.                                                  |
@@ -546,7 +548,7 @@ stateDiagram-v2
 
 | Extensión del CU | Condición                                          | Comportamiento del sistema                                                                                                                                      |
 | :--------------- | :------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 3.A              | El conductor quiere filtrar recorridos             | Fuera de alcance (CU N.º 2, ver D-02).                                                                                                                           |
+| 3.A              | El conductor quiere filtrar recorridos             | Fuera de alcance (CU N.º 2, ver D-02). **Superado en v0.6 (D-29):** el CU-02 se incorpora; ver Parte II. |
 | 3.B              | Modalidad "Destino personalizado"                  | Lista de puntos de referencia, selección de origen y destino, cálculo de viabilidad (distancia, consumo de batería, calorías). Continúa en el paso 4.            |
 | 3.C              | Modalidad "Recorrido precargado"                   | Lista de circuitos de ejemplo, selección, cálculo de viabilidad y carga de las alertas de terreno del circuito. Continúa en el paso 4.                           |
 | 3.B / 3.C        | Origen igual a destino, o falta seleccionar algo   | El botón "Iniciar" permanece deshabilitado y se indica qué falta seleccionar.                                                                                    |
@@ -690,7 +692,7 @@ flowchart TD
    - **Destino Personalizado:** El conductor selecciona el punto de inicio y el punto de finalización. Una vez establecidos ambos, el sistema calcula la viabilidad del recorrido.
    - **Recorrido Precargado:** El conductor selecciona uno de los circuitos disponibles. El sistema calcula la viabilidad y proyecta las alertas de terreno.
 
-4. **Filtrar recorridos (opcional, solo Recorrido Precargado):** El botón «Filtrar recorridos» corresponde al CU N.º 2, que pertenece a otra spec. En este prototipo muestra un aviso y el conductor continúa con el listado completo (D-16).
+4. **Filtrar recorridos (opcional, solo Recorrido Precargado):** El botón «Filtrar recorridos» corresponde al CU N.º 2, que pertenece a otra spec. En este prototipo muestra un aviso y el conductor continúa con el listado completo (D-16). ***Superado en v0.6 (D-29):** el CU-02 se incorpora; ver Parte II.*
 
 5. **Verificar las condiciones meteorológicas:** Antes de iniciar el recorrido, el sistema consulta las condiciones meteorológicas.
 
@@ -769,7 +771,7 @@ La numeración corresponde a los pasos del flujo principal de la sección 4.1. L
 | :-------- | :--------------- | :------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 3.A       | 3.B              | El conductor selecciona la modalidad «Destino Personalizado».              | La app muestra los puntos de referencia oficiales para elegir origen y destino (distintos entre sí). El conductor selecciona ambos y la app calcula la viabilidad: distancia estimada, tiempo, consumo proyectado de batería y calorías a quemar. Continúa en el paso 5.                           |
 | 3.B       | 3.C              | El conductor selecciona la modalidad «Recorrido Precargado».               | La app muestra los circuitos oficiales precargados por la UNTDF. El conductor selecciona uno y la app calcula su viabilidad (distancia, tiempo, consumo y calorías) y proyecta las alertas específicas del terreno. Continúa en el paso 5.                                                          |
-| 4.A       | 3.A              | El conductor decide filtrar los recorridos precargados.                    | El botón «Filtrar recorridos» muestra el aviso «Disponible en la SPEC Filtrar recorridos». El CU N.º 2 no se ejecuta en este prototipo (D-16). El conductor continúa en el paso 3 con el listado completo.                                                                                         |
+| 4.A       | 3.A              | El conductor decide filtrar los recorridos precargados.                    | El botón «Filtrar recorridos» muestra el aviso «Disponible en la SPEC Filtrar recorridos». El CU N.º 2 no se ejecuta en este prototipo (D-16). El conductor continúa en el paso 3 con el listado completo. **Superado en v0.6 (D-29):** el CU-02 se incorpora; ver Parte II. El botón ejecuta el CU-02 (II.3). |
 | 6.A       | 4.B              | Se detectan condiciones climáticas adversas antes del recorrido.           | La app emite un aviso por voz/audio y muestra un aviso de precaución meteorológica con un botón de confirmación. El conductor confirma y la app detiene el aviso sonoro. Continúa en el paso 7.                                                                                                    |
 | 7.A       | 4.A              | El vehículo tiene el 20 % de batería o menos antes de iniciar.             | La app emite un aviso por voz/audio y visual informando la batería baja y muestra un botón de confirmación. El conductor presiona «Confirmar» para silenciar el aviso y asumir la responsabilidad de iniciar. Continúa en el paso 8.                                                                |
 | 9.A       | 7.A              | La batería baja al 20 % o menos durante el recorrido.                      | La app emite un aviso por voz/audio y visual notificando que la batería llegó al 20 %, con botón de confirmación. El conductor presiona «Confirmar» para silenciar el aviso. Continúa en el paso 9.                                                                                                |
@@ -791,7 +793,7 @@ Pantalla inicial del caso de uso. Presenta la información general del vehículo
 - **Estado de la batería:** parte superior de la pantalla, con el porcentaje de carga.
 - **Información meteorológica:** junto al estado de la batería, con las condiciones actuales.
 - **Modalidades de recorrido:** zona central, como opciones seleccionables: Recorrido Libre, Destino Personalizado y Recorrido Precargado.
-- **Botón «Filtrar recorridos»:** marcador de la spec de filtros; muestra un aviso (D-16).
+- **Botón «Filtrar recorridos»:** marcador de la spec de filtros; muestra un aviso (D-16). ***Superado en v0.6 (D-29):** el CU-02 se incorpora; ver Parte II.*
 
 **4.4.2. Selección y configuración del recorrido**
 
@@ -1175,7 +1177,7 @@ Cada fila conserva el contraste documental que dio origen a la decisión. El equ
 | #    | Ambigüedad / contradicción                                                                                                                                                                                 | Propuesta de este borrador                                                                                                          | Impacto | Decide / estado        |
 | :--- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------- | :------ | :--------------------- |
 | D-01 | Mínimos para guardar en el historial: RNF-10 y la spec dicen "300 m o 3 minutos" (con **o**); v0.2 informaba AND en actividad, pero docs/Diagrama_Actividad.svg actual ya dice “300m o 3min”.                                                      | "O": se guarda si cumple al menos uno; se descarta solo si no cumple ninguno. Conservar decisión OR; actividad actual ya alineada, no modificarla.             | Alto    | Decidido (18/11)     |
-| D-02 | Filtrar recorridos: el CU N.º 1 lo invoca (ext. 3.A) y el diagrama de actividad lo incluye como subactividad, pero la spec "Realizar recorrido" no lista RF-05 ni CU N.º 2.                                 | Fuera de alcance (es otra spec). El botón "Filtrar recorridos" no se muestra en el prototipo y se declara en el alcance.             | Medio   | Decidido (18/11)     |
+| D-02 | Filtrar recorridos: el CU N.º 1 lo invoca (ext. 3.A) y el diagrama de actividad lo incluye como subactividad, pero la spec "Realizar recorrido" no lista RF-05 ni CU N.º 2.                                 | Fuera de alcance (es otra spec). El botón "Filtrar recorridos" no se muestra en el prototipo y se declara en el alcance.             | Medio   | Decidido (18/11) **Superado en v0.6 (D-29):** el CU-02 se incorpora; ver Parte II. |
 | D-03 | Emergencia: el CU N.º 8 pide confirmación y envío de ubicación, la spec pide una pantalla con "Cancelar" (prueba). No se define qué pasa con el recorrido mientras la pantalla está visible.               | Gana la spec. El recorrido y la telemetría siguen por debajo; no hay confirmación previa ni envío.                                  | Medio   | Decidido (18/11)     |
 | D-04 | RNF-11 habla de "voz/audio"; el CU habla de "alerta sonora".                                                                                                                                               | Cada alerta emite pitido (Web Audio) y mensaje de voz en español (Web Speech).                                                       | Medio   | Decidido (18/11)     |
 | D-05 | Umbral de frecuencia cardíaca: el CU dice "umbral máximo recomendado para su perfil físico" y no da valor.                                                                                                 | 160 bpm configurable en el perfil simulado.                                                                                          | Medio   | Decidido por aprobación del RFC v0.3 informada por el equipo |
@@ -1241,7 +1243,7 @@ Plan incremental de adaptación. La primera tarea de BUILD es T-01b; T-01a se ce
 | T-05a | Ajustar texto e íconos de pantallas existentes a ≥20pt/≥20vh centrados, sin movimiento y con español; revisar visibilidad. | RNF-05/06; TC-06/07 | Tras D-23 sobre color; cumplir mínimos del PDF, sin reducirlos por conveniencia. | Completada — ajustes gráficos y medición en Chrome; evidencia 8.4 |
 | T-05c | Añadir modos claro/oscuro con estilos nativos compartidos y selector simple antes de iniciar. | RNF-15; TC-27 | Tras T-05a y método D-23 aprobado; tema estable al navegar, sin dependencias ni persistencia de preferencia obligatoria. | Completada — ambos temas observados en Chrome y conservación probada |
 | T-05d | Reorganizar gráficos, botones y texto en pantallas del CU-01 para cumplir 70/30. | RNF-15; TC-27/07 | Tras T-05c; capturas/medición en ambos temas sin doble conteo ni ocultar información principal. | Completada — áreas medidas en vistas iniciales de las seis pantallas; evidencia y límites en 8.4 |
-| T-05b | Ocultar filtro de otra SPEC y rotular datos de circuitos como ejemplos. | RF-04/RNF-20, D-02; TC-01/02 | No implementar CU-02 ni administración; mantener selección actual. | Completada — 39/39 pruebas |
+| T-05b | Ocultar filtro de otra SPEC y rotular datos de circuitos como ejemplos. | RF-04/RNF-20, D-02; TC-01/02 | No implementar CU-02 ni administración; mantener selección actual. | Completada — 39/39 pruebas **Ocultar el filtro: superado en v0.6 (D-29);** el rótulo de ejemplos se mantiene. |
 | T-06 | Reconocimiento/rearme de banners y confirmación sin controlar asistencia. | RF-07; TC-08/09/10 | Tras D-22; sin repetición persistente, nueva alerta al reaparecer condición. | Completada — pruebas 40/40 |
 | T-07a | Conservar BPM condicional y agregar prueba de UI de vínculo/actualización. | RF-18; TC-26 y TC-09 | Tras D-05/D-12; visible con vínculo sin abrir QA, oculto sin vínculo. No rehacer sensor. | Completada — pruebas 41/41 |
 | T-07b | Completar batería móvil/odómetro y datos variables de motores/frenos. | RF-14/15; TC-18/19 | Tras T-02a; misma fuente simulada, controles QA suficientes; sin bloqueo service. | Completada — prueba UI TC-18/19; suite 42/42 |
@@ -1260,6 +1262,257 @@ RF-09 queda asociado a T-10b y TC-13/14 dentro de la emergencia acotada del SPEC
 
 ---
 
+---
+
+# Parte II — CU N.º 2: Filtrar recorridos (v0.6, aprobada 19/11/2026)
+
+> **Agregado en v0.6.** Esta parte extiende el RFC con el CU N.º 2 sin modificar lo aprobado para el CU-01 (secciones 1 a 10 de la Parte I). Donde una decisión de la Parte I queda superada, se dejó una nota «Superado en v0.6 (D-29)» junto al texto original, que se conserva como registro histórico. **Gate 1 del CU-02 pendiente:** no se escribe código del CU-02 hasta que el equipo apruebe esta parte (AGENTS.md, SDD_PLAYBOOK §3). **Aprobada por el usuario en el chat el 19/11/2026; se habilita BUILD (T-14 a T-18).**
+
+**Fuentes del CU-02:**
+- [CU N.º 2: Filtrar recorridos](<docs/CASO_ DE_USO_FILTRAR_RECORRIDOS>), leído completo el 19/11/2026: escenario principal 1–5 y extensión 5.A.
+- `docs/Entrega 4.pdf`: RF-05 (p. 3), RNF-12 (p. 7) y **SPEC «Filtrar recorridos» (pp. 14–16)**, con contexto, objetivos, no-objetivos, 8 criterios de aceptación y 2 decisiones abiertas.
+- `docs/Diagrama de clase-FINAL- CU_02 Filtrar Recorridos.drawio.svg`: pese al nombre, la página «FINAL- CU_02 Filtrar Recorridos» es un **diagrama de comunicación** `C: Conductor` ↔ `R: Recorrido Oficial`, con los mensajes `obtenerFiltros(calorias,km,dificultad)`, `listaFiltros`, `filtrarRecorridos(calorias,km,dificultad)`, `filtrarPor(filtro)`, `cumpleFiltro(filtro)`, `recorridos` y `alt 5.A → null`. La página «FINAL-dc-entrega4» del mismo archivo contiene `RecorridosOficiales` con `-nivelDificultad: String`, `+obtenerFiltros()`, `+filtrarPor(calorias,nivelDificultad,kilometros): Array[recorrido]` y `+cumpleFiltro(): boolean` (coincide con 3.1).
+- `docs/SPEC_FILTRAR_RECORRIDOS` **existe pero está vacío (0 bytes)**. Mientras no se complete, la SPEC vigente es la del PDF (pp. 14–16). Si el equipo la completa con diferencias, prevalece la nueva y se actualiza esta parte. **Actualización 19/11/2026:** el archivo ya fue completado y se releyó entero. Su texto coincide palabra por palabra con la SPEC del PDF (pp. 14–16): mismo contexto, objetivos, no-objetivos, RF/RNF y los 8 criterios CA2-01 a CA2-08. Solo omite la sección «Decisiones abiertas / Preguntas», que ya está resuelta por D-31. **No cambia ningún requisito, decisión ni prueba de esta parte.** El CU-02 (`docs/CASO_ DE_USO_FILTRAR_RECORRIDOS`) tampoco cambió.
+
+## II.1 Alcance, objetivos y requisitos
+
+**Contexto (SPEC):** hay numerosos recorridos precargados que varían en distancia total (km), calorías estimadas a quemar y nivel de dificultad. Los conductores necesitan encontrar fácil y rápido los que se ajustan a sus preferencias.
+
+**Objetivos (SPEC, p. 14):**
+1. Acceder al panel de filtros con un botón disponible en el panel de recorridos.
+2. Filtrar por distancia total: hasta 5 km, hasta 10 km, hasta 15 km o más de 15 km.
+3. Filtrar por calorías estimadas: hasta 150, hasta 300, hasta 500 o más de 500 kcal.
+4. Filtrar por dificultad: BAJA, MEDIA o ALTA.
+5. Combinar los filtros.
+6. Mostrar los recorridos que coinciden.
+7. Informar cuando no hay coincidencias.
+8. Modificar los filtros y volver a buscar.
+
+**No-objetivos (SPEC, p. 15):**
+- Ingresar valores personalizados fuera de las opciones fijas.
+- Crear, modificar o eliminar recorridos precargados.
+- Iniciar o realizar recorridos: eso es el CU-01, que ya está implementado y se reutiliza sin cambios.
+- Buscar recorridos por nombre.
+
+| Requisito | Fuente | Contenido aplicable |
+| :--- | :--- | :--- |
+| CU-02 | `docs/CASO_ DE_USO_FILTRAR_RECORRIDOS` | Botón de filtros → subpanel (calorías, km, dificultad) → valores fijos → «Buscar» → lista; 5.A sin resultados → informar y volver al paso 3. |
+| RF-05 | Entrega 4, p. 3 | «Filtros para los recorridos precargados»: elegir el recorrido mediante filtros (distancia, calorías, dificultad). |
+| RNF-12 | Entrega 4, p. 7 | «Tipos de filtrado»: dificultad (Baja, Media, Alta), distancia (hasta 5, hasta 10, hasta 15 km o más) y gasto calórico (hasta 150, hasta 300, hasta 500 kcal o más). |
+
+**Relación con el CU-01:** la extensión 3.A del CU-01 («El conductor decide filtrar los recorridos precargados») ejecuta el CU-02 (3.A.1) y vuelve al paso 2 mostrando solo los recorridos que cumplen los criterios (3.A.2). En el prototipo esto significa que el listado de circuitos de la modalidad Precargado (CU-01 3.C) muestra solo los resultados del filtro. El inicio, el seguimiento, las alertas, la finalización y el historial del CU-01 no cambian.
+
+**Qué es real y qué es simulado (agrega a la tabla de la sección 1):** el filtrado es **real**, con funciones puras de dominio. El catálogo de circuitos y su dificultad son **datos de ejemplo** (D-32), igual que hoy, rotulados como ejemplos (T-05b) y sin valor oficial. No hay backend ni API externa.
+
+**Criterios de aceptación del CU-02.** Se numeran **CA2-01 a CA2-08** por orden de aparición en la SPEC (p. 15), para no confundirlos con los CA-01 a CA-18 del CU-01:
+
+| Id | Criterio (SPEC Filtrar recorridos) |
+| :--- | :--- |
+| CA2-01 | Con sesión activa, al acceder al panel de recorridos se ve un botón para acceder a los filtros. |
+| CA2-02 | Al presionar el botón, se muestra un subpanel con opciones para filtrar por kilómetros, calorías estimadas y nivel de dificultad. |
+| CA2-03 | Solo se pueden elegir los valores fijos de cada filtro, sin ingresar valores personalizados. |
+| CA2-04 | Se pueden elegir uno o más criterios antes de buscar. |
+| CA2-05 | Con uno o más filtros elegidos, al presionar «Buscar» se ven solo los recorridos que cumplen **todos** los criterios. |
+| CA2-06 | Si hay recorridos que cumplen, la búsqueda muestra la lista de recorridos encontrados. |
+| CA2-07 | Si ninguno cumple, «Buscar» muestra un mensaje que indica que no se encontraron resultados. |
+| CA2-08 | Después de una búsqueda sin resultados, al modificar los filtros y volver a presionar «Buscar», la lista se actualiza con los nuevos criterios. |
+
+## II.2 Contraste SPEC ↔ UML ↔ RFC ↔ implementación (CU-02)
+
+| Requisito / CA | Implementación actual (`main` en f787bbc) | Brecha y acción v0.6 |
+| :--- | :--- | :--- |
+| CA2-01 / CU-02 paso 1 | No hay botón de filtros. T-05b lo retiró por D-02 (`SelectorModalidad.tsx` solo tiene las tres modalidades). | Agregar el botón «Filtrar recorridos» en el panel principal, junto a las modalidades (D-32). |
+| CA2-02/03/04 / RNF-12 | No hay subpanel ni tipo de filtro. | Nuevo `PanelFiltros` con tres `<select>` de valores fijos más «Cualquiera» (D-30, D-31). |
+| CA2-05/06 / RF-05 | `CircuitoPrecargado` no tiene dificultad. Las kcal no se guardan: se calculan en `calcularViabilidad` como km × `CALORIAS_POR_KM_KCAL` (35). Solo hay 3 circuitos (4, 6 y 10 km). | Agregar `dificultad`; ampliar el catálogo de ejemplo para cubrir todos los rangos (D-32); filtrar con funciones puras (II.5). |
+| CA2-07/08 / CU-02 5.A | No existe. | Mensaje «No se encontraron resultados» que conserva los filtros elegidos, para modificarlos y volver a buscar. |
+| UML `RecorridosOficiales.nivelDificultad`, `obtenerFiltros`, `filtrarPor`, `cumpleFiltro`; `Usuario.filtrarRecorridos` | La sección 3.3 declara que no se implementan. | Se implementan como funciones de dominio, con la misma correspondencia funciones ↔ clases que D-24 (II.5). |
+
+## II.3 Diseño detallado
+
+### II.3.1 Flujo principal (CU-02, integrado con CU-01 3.A)
+
+1. **Abrir filtros:** en el panel de recorridos (pantalla de configuración del CU-01), el conductor presiona «Filtrar recorridos». La app selecciona la modalidad **Precargado**, porque el CU-02 solo aplica a precargados (RF-05), y despliega el subpanel de filtros (`aria-expanded`).
+2. **Mostrar subpanel:** se muestran tres selectores fijos: *Distancia* (Cualquiera · Hasta 5 km · Hasta 10 km · Hasta 15 km · Más de 15 km), *Calorías* (Cualquiera · Hasta 150 kcal · Hasta 300 kcal · Hasta 500 kcal · Más de 500 kcal) y *Dificultad* (Cualquiera · Baja · Media · Alta), más los botones «Buscar» y «Limpiar filtros».
+3. **Elegir valores:** el conductor elige uno o más criterios. No hay campos de texto (CA2-03).
+4. **Buscar:** el conductor presiona «Buscar». Recién ahí se aplica el filtro; cambiar un selector no filtra solo, para respetar el paso 4 del CU.
+5. **Mostrar resultados:** la app informa «N recorridos encontrados» y el selector «Circuito precargado» del CU-01 pasa a listar solo los resultados, con nombre, km, kcal estimadas y dificultad. Si el circuito elegido antes ya no está en los resultados, se selecciona el primero. Las estimaciones de viabilidad (RF-06) y las alertas previas (CU-01, pasos 4–5) se calculan sobre el circuito elegido, como hoy. El conductor sigue en el CU-01 (3.C.2 → paso 4).
+
+**Extensión 5.A (sin resultados):** la app muestra «No se encontraron resultados» (`role="status"`), conserva los filtros elegidos y deshabilita «Iniciar Recorrido» para Precargado, porque no hay circuito seleccionado: se reutiliza `validarSeleccion` → «Circuito no seleccionado». El conductor modifica los filtros y vuelve a presionar «Buscar» (paso 3, CA2-08), o presiona «Limpiar filtros».
+
+**Buscar sin filtros y Limpiar (D-31):** «Buscar» con los tres criterios en «Cualquiera» muestra todos los precargados. «Limpiar filtros» vuelve los tres criterios a «Cualquiera» y muestra el listado completo en una sola acción.
+
+**Cierre del subpanel y estado:** el subpanel se puede ocultar con el mismo botón, y el último resultado aplicado se mantiene mientras el conductor siga en la configuración. Si cambia a Libre o Personalizado, el filtro no afecta esas modalidades. El filtro **no se persiste** (no es necesario según RNF-07) y vuelve a «Cualquiera» al terminar un recorrido, igual que el reseteo del panel después de finalizar.
+
+### II.3.2 Escenarios alternativos y errores
+
+| Caso | Disparador | Comportamiento |
+| :--- | :--- | :--- |
+| 5.A | Ningún circuito cumple todos los criterios. | Mensaje «No se encontraron resultados», filtros conservados, Iniciar deshabilitado para Precargado y se puede volver a buscar. |
+| Buscar sin criterios | Los tres selectores en «Cualquiera». | Listado completo (D-31). |
+| Valor fuera de las opciones | No puede ocurrir desde la UI porque son `<select>` cerrados. El dominio ignora valores desconocidos tratándolos como «Cualquiera», y eso se prueba. | Sin error visible. |
+| Catálogo vacío | Precondición del CU-02 no cumplida («existen recorridos precargados»). | Mismo mensaje 5.A. No se espera en el prototipo. |
+
+### II.3.3 Interfaz de usuario
+
+```
+┌──────── Panel de recorridos ─────────────┐
+│  Elegí tu modalidad                      │
+│  [ Libre ] [ Personalizado ] [ Precargado ]
+│  [ ⚲ Filtrar recorridos ▾ ]              │  ← CA2-01 (panel principal)
+│ ┌─ Filtros ────────────────────────────┐ │
+│ │ Distancia   [ Hasta 10 km      ▾ ]   │ │  ← CA2-02/03 (valores fijos)
+│ │ Calorías    [ Cualquiera       ▾ ]   │ │
+│ │ Dificultad  [ Media            ▾ ]   │ │
+│ │ [ Limpiar filtros ]   [ Buscar ]     │ │  ← D-31 / CU-02 paso 4
+│ └──────────────────────────────────────┘ │
+│  2 recorridos encontrados                │  ← CA2-06   (5.A: «No se encontraron resultados»)
+│  Circuito precargado [ Circuito Costero · 6 km · 210 kcal · Media ▾ ]
+│  Estimaciones: Distancia · Tiempo · Batería · Calorías (RF-06)
+│  [ Iniciar Recorrido ]                   │
+└──────────────────────────────────────────┘
+```
+
+- **RNF-05/06/15:** se aplican las mismas reglas de la sección 4.4 de la Parte I a todo lo nuevo: textos en español, tamaños mínimos, modos claro y oscuro con los estilos compartidos, y predominio gráfico. El botón lleva un ícono propio (embudo) hecho con `Icono.tsx`, sin librerías.
+- **Responsive:** el subpanel se apila en una columna en el móvil vertical y en dos columnas desde 700 px. El panel de configuración ya admite scroll vertical en móvil, a diferencia de la pantalla de recorrido (D-28): no se exige "sin scroll" en la configuración, pero **no puede haber desborde horizontal ni contenido cortado** en ninguna resolución de TC-07. Se mide igual que en D-28 (Chrome headless).
+- La pantalla de recorrido en curso (D-27/D-28) **no cambia**.
+
+## II.4 Modelo de datos
+
+| Tipo / dato | Cambio | Detalle |
+| :--- | :--- | :--- |
+| `DificultadRecorrido` (`domain/tipos.ts`) | Nuevo | `'BAJA' \| 'MEDIA' \| 'ALTA'` (RNF-12). |
+| `CircuitoPrecargado` (`services/catalogo.ts`) | Se agrega `dificultad: DificultadRecorrido` | `id`, `nombre`, `distanciaKm` y las alertas de terreno no cambian. Las kcal **no** se guardan: se derivan como `distanciaKm × CALORIAS_POR_KM_KCAL` (D-32, coherente con D-21 y RF-06). |
+| `FiltroRecorridos` (`domain/tipos.ts`) | Nuevo | `{ distancia?: 'HASTA_5' \| 'HASTA_10' \| 'HASTA_15' \| 'MAS_15'; calorias?: 'HASTA_150' \| 'HASTA_300' \| 'HASTA_500' \| 'MAS_500'; dificultad?: DificultadRecorrido }`. Un campo ausente significa «Cualquiera». |
+| `localStorage` | Sin cambios | El filtro es estado de la sesión de la pantalla. `triciclos.historial.v1` y el progreso no cambian. |
+
+**Catálogo de ejemplo propuesto (D-32).** Los datos son ficticios. Los tres primeros conservan su id, distancia y alertas de terreno, así que TC-08 no cambia:
+
+| id | Nombre (ejemplo) | km | kcal (km × 35) | Dificultad |
+| :--- | :--- | ---: | ---: | :--- |
+| c1 | Circuito Costero | 6 | 210 | MEDIA |
+| c2 | Paseo del Bosque | 4 | 140 | BAJA |
+| c3 | Ruta del Glaciar | 10 | 350 | ALTA |
+| c4 | Costanera Corta | 3 | 105 | BAJA |
+| c5 | Mirador del Canal | 8 | 280 | MEDIA |
+| c6 | Subida al Cerro | 12 | 420 | ALTA |
+| c7 | Bahía Encerrada | 14 | 490 | BAJA |
+| c8 | Gran Vuelta de la Ciudad | 16 | 560 | MEDIA |
+
+Cobertura acumulativa (D-30):
+- Distancia: ≤5 km → c2, c4; ≤10 → además c1, c3, c5; ≤15 → además c6, c7; >15 → c8.
+- Calorías: ≤150 → c2, c4; ≤300 → además c1, c5; ≤500 → además c3, c6, c7; >500 → c8.
+- Valores justo en el límite que se prueban: c3 = 10 km (entra en «Hasta 10 km») y no hay un circuito de 15 km exactos. Por eso TC-35 prueba el límite con datos de prueba propios.
+- Combinación sin resultados para la extensión 5.A: *Hasta 5 km + Alta*.
+
+## II.5 Interfaces (contratos internos)
+
+Funciones puras en `src/domain/filtros.ts`, sin React ni E/S:
+
+| Contrato | Entrada | Salida | Reglas |
+| :--- | :--- | :--- | :--- |
+| `OPCIONES_FILTRO` | — | Valores fijos y etiquetas en español de los tres criterios | Es la única fuente de las opciones de la UI (CA2-03). Equivale a `obtenerFiltros()` / `listaFiltros` del UML. |
+| `caloriasEstimadas(circuito)` | `CircuitoPrecargado` | kcal | `distanciaKm × CONFIG_RECORRIDO.CALORIAS_POR_KM_KCAL`. Usa la misma constante que `calcularViabilidad`. |
+| `cumpleFiltro(circuito, filtro)` | Circuito y `FiltroRecorridos` | `boolean` | AND de los criterios presentes. `HASTA_X` significa `≤ X` y `MAS_15`/`MAS_500` significa `> 15` / `> 500` (D-30). Un criterio ausente o desconocido significa «Cualquiera». Equivale a `cumpleFiltro()` del UML. |
+| `filtrarRecorridos(filtro, catalogo = CIRCUITOS_PRECARGADOS)` | Filtro (+ catálogo inyectable para pruebas) | `CircuitoPrecargado[]` | Mantiene el orden del catálogo y devuelve `[]` si no hay coincidencias (`alt 5.A → null` del diagrama). Equivale a `filtrarPor(...)` / `filtrarRecorridos(...)` del UML. |
+
+**Correspondencia con el UML (como D-24):** no se crean clases `Usuario` ni `RecorridosOficiales`. Los mensajes del diagrama de comunicación se mapean a estas funciones y al estado React del componente. La firma UML de `Usuario.filtrarRecorridos(calorias, kilometros, distancia)` tiene `distancia` en lugar de `dificultad`, y se toma como error de tipeo del diagrama porque el diagrama de comunicación y RNF-12 dicen *dificultad* (D-29).
+
+## II.6 Estructura del código (cambios previstos)
+
+| Archivo | Cambio |
+| :--- | :--- |
+| `src/domain/tipos.ts` | `DificultadRecorrido` y `FiltroRecorridos`. |
+| `src/domain/filtros.ts` (nuevo) + `filtros.test.ts` | Contratos de II.5. |
+| `src/services/catalogo.ts` | `dificultad` y catálogo de ejemplo de II.4. `calcularViabilidad` y `validarSeleccion` no cambian. |
+| `src/components/PanelFiltros.tsx` (nuevo) | Subpanel: tres `<select>` desde `OPCIONES_FILTRO`, «Buscar», «Limpiar filtros» y mensajes de resultado o de 5.A. |
+| `src/components/SelectorModalidad.tsx` | Botón «Filtrar recorridos» (`aria-expanded`, `aria-controls`) en el panel principal. |
+| `src/components/ConfiguracionRecorrido.tsx` | El selector «Circuito precargado» recorre los resultados filtrados, con km, kcal y dificultad en cada opción. Ajusta la selección cuando el circuito queda afuera. |
+| `src/App.tsx` | Estado del filtro aplicado y de la apertura del subpanel, compartido entre SelectorModalidad y Configuración. Se resetea al finalizar el recorrido. |
+| `src/components/Icono.tsx`, `src/interfaz.css` | Ícono de embudo y estilos del subpanel (ambos temas, responsive). |
+| `src/test/filtros.test.tsx` (nuevo) | Pruebas de UI de TC-31 a TC-40. |
+
+Sin dependencias nuevas. `npm test`, `npm run lint` y `npm run build` siguen como en 7.1.
+
+## II.7 Plan de verificación (CU-02)
+
+| Id | Caso | Pasos | Resultado esperado | Tipo |
+| :--- | :--- | :--- | :--- | :--- |
+| TC-31 | CA2-01: botón visible | Abrir la app (panel de recorridos). | Se ve «Filtrar recorridos» sin abrir menús. Con 0 interacciones está visible en 360×800 y 1280×800. | Automático (UI) + medición |
+| TC-32 | CA2-02: subpanel | Presionar «Filtrar recorridos». | Se selecciona Precargado y aparece el subpanel con Distancia, Calorías, Dificultad, «Buscar» y «Limpiar filtros»; `aria-expanded=true`. Al volver a presionar se oculta. | Automático (UI) |
+| TC-33 | CA2-03 / RNF-12: valores fijos | Inspeccionar los controles del subpanel. | Solo hay `<select>`, sin campos de texto ni numéricos. Las opciones son exactamente las de RNF-12 más «Cualquiera». | Automático (UI) |
+| TC-34 | CA2-04/05: combinación AND | Elegir *Hasta 10 km* + *Media* y presionar Buscar. | Se listan solo c1 y c5. Antes de presionar Buscar, el listado no cambia. | Automático (UI + dominio) |
+| TC-35 | D-30: límites acumulativos | Pruebas de dominio con un catálogo inyectado de 5, 10, 15, 15.1 km y 150, 300, 500, 501 kcal. | 5 km entra en «Hasta 5»; 15 km entra en «Hasta 15» y no en «Más de 15»; 15.1 km entra en «Más de 15»; ídem para kcal; un criterio desconocido se trata como «Cualquiera». | Automático (dominio) |
+| TC-36 | CA2-06: lista de resultados | Elegir *Hasta 150 kcal* y presionar Buscar. | «2 recorridos encontrados», y el selector muestra solo c2 y c4 con km, kcal y dificultad. | Automático (UI) |
+| TC-37 | CA2-07 / 5.A: sin resultados | Elegir *Hasta 5 km* + *Alta* y presionar Buscar. | Aparece «No se encontraron resultados», los filtros se conservan y «Iniciar Recorrido» queda deshabilitado en Precargado. | Automático (UI) |
+| TC-38 | CA2-08: nueva búsqueda | Después de TC-37, cambiar Dificultad a *Baja* y presionar Buscar. | El mensaje 5.A desaparece y se listan c2 y c4. | Automático (UI) |
+| TC-39 | D-31: sin filtros y Limpiar | (a) Buscar con todo en «Cualquiera». (b) Aplicar un filtro y luego «Limpiar filtros». | (a) y (b) muestran los 8 circuitos; en (b) los tres selectores vuelven a «Cualquiera» en una sola acción. | Automático (UI) |
+| TC-40 | CU-01 3.A.2: continuidad | Filtrar *Más de 15 km*, elegir el resultado e iniciar el recorrido. | Las estimaciones de RF-06 coinciden con `calcularViabilidad` (16 km, 560 kcal). El seguimiento del CU-01 arranca normalmente y el resumen y el historial no cambian. | Automático (UI) |
+
+**Regresión:** se vuelven a correr TC-01 a TC-30 de la Parte I. En particular: TC-02/03 (selección y estimaciones con el catálogo ampliado), TC-08 (terreno de c1 y c3 sin cambios), TC-07/27 (legibilidad y temas, ahora también con el subpanel) y TC-06/30 (la pantalla de recorrido no cambia). Además, Chrome headless en las resoluciones de TC-07 en ambos temas: sin desborde horizontal ni contenido cortado en la configuración con el subpanel abierto, con resultados y en 5.A.
+
+### II.7.1 Trazabilidad requisito → prueba (CU-02)
+
+| Requisito | Pruebas |
+| :--- | :--- |
+| CU N.º 2 (escenario 1–5 y extensión 5.A) | TC-31 a TC-39 |
+| CU N.º 1, extensión 3.A (3.A.1/3.A.2) | TC-40 |
+| RF-05 Filtros para recorridos precargados | TC-34, TC-36, TC-40 |
+| RNF-12 Tipos de filtrado | TC-33, TC-35 |
+| RNF-05/06/15 aplicados a la nueva UI | TC-07, TC-27 (regresión ampliada al subpanel) |
+
+### II.7.2 Cobertura de los criterios de la SPEC (CU-02)
+
+| CA | Pruebas |
+| :--- | :--- |
+| CA2-01 | TC-31 |
+| CA2-02 | TC-32 |
+| CA2-03 | TC-33 |
+| CA2-04 | TC-34 |
+| CA2-05 | TC-34, TC-35 |
+| CA2-06 | TC-36 |
+| CA2-07 | TC-37 |
+| CA2-08 | TC-38 |
+| Decisiones abiertas de la SPEC | TC-39 (D-31) |
+
+## II.8 Riesgos y decisiones (CU-02)
+
+### II.8.1 Decisiones (continúan la numeración de 9.1)
+
+| # | Ambigüedad / contradicción | Decisión | Impacto | Estado |
+| :--- | :--- | :--- | :--- | :--- |
+| D-29 | En v0.5 el CU-02 estaba fuera de alcance (D-02 y la sección 1: «es otra spec»; T-05b ocultó el botón; 4.1 y 4.4 lo describían como marcador con aviso). El equipo decide incorporarlo como extensión del prototipo. Además, la firma UML `Usuario.filtrarRecorridos(calorias, kilometros, distancia)` contradice el diagrama de comunicación y RNF-12, que dicen *dificultad*. | Se incorpora el CU-02 (RF-05, RNF-12, SPEC Filtrar recorridos). D-02, el ocultamiento de T-05b y los textos de «marcador/aviso» quedan **superados**, conservados como historia y anotados. La tercera variable del filtro es *dificultad*. | Medio: amplía el alcance de forma controlada; el CU-01 no cambia. | Aprobado (19/11/2026) |
+| D-30 | RNF-12 y la SPEC dicen «hasta 5 / hasta 10 / hasta 15 km o más de 15» y «hasta 150 / 300 / 500 kcal o más de 500», sin aclarar si los rangos son acumulativos o tramos. | **Acumulativos:** «Hasta X» es `≤ X`; «Más de 15 km» es `> 15` y «Más de 500 kcal» es `> 500`. Varios criterios se combinan con **AND** (CA2-05). Lo eligió el usuario el 19/11/2026. | Bajo. | Aprobado (19/11/2026) |
+| D-31 | Decisiones abiertas de la SPEC (p. 16): qué pasa si no se elige ningún filtro y si se pueden borrar todos en una acción. | «Buscar» sin criterios muestra todos los precargados. Se agrega «Limpiar filtros», que vuelve todo a «Cualquiera» y muestra el listado completo. Lo eligió el usuario el 19/11/2026. | Bajo. | Aprobado (19/11/2026) |
+| D-32 | El catálogo de ejemplo tiene 3 circuitos sin dificultad, así que no se pueden probar los rangos de RNF-12. Las kcal salen de km × 35 (D-21). La SPEC (CA2-01) pone el botón en el «panel de recorridos». | Catálogo de 8 circuitos **de ejemplo** con dificultad (II.4). Las kcal se siguen derivando de km × 35 para que el filtro y las estimaciones de RF-06 coincidan. El botón va en el **panel principal**, junto a las modalidades, y al usarlo selecciona Precargado (II.3). Lo eligió el usuario el 19/11/2026. | Bajo: el filtro de kcal queda correlacionado con la distancia, lo cual es esperable con la fórmula aprobada. | Aprobado (19/11/2026) |
+
+### II.8.2 Riesgos
+
+| Riesgo | Probabilidad | Impacto | Mitigación |
+| :--- | :--- | :--- | :--- |
+| Que los datos ficticios de circuitos y dificultad se tomen como oficiales. | Media | Bajo | Se rotulan «de ejemplo» (T-05b) y quedan como datos en `catalogo.ts`, fáciles de reemplazar. |
+| Que el subpanel desborde o tape contenido en móvil, o rompa el 70/30 de RNF-15. | Media | Medio | Selects a ancho completo, medición headless en las resoluciones de TC-07 y revisión de capturas en ambos temas. |
+| Que el catálogo ampliado cambie resultados de pruebas existentes (TC-02/03/08). | Baja | Medio | c1–c3 conservan id, distancia y alertas; se corre la regresión completa. |
+| Que `SPEC_FILTRAR_RECORRIDOS` se complete después con diferencias. | Media | Medio | Esta parte cita el PDF (pp. 14–16); si cambia la SPEC, se actualiza el RFC antes del código. **Cerrado (19/11/2026):** se completó sin diferencias con el PDF. |
+
+## II.9 Plan de trabajo (CU-02)
+
+Cada tarea arranca **solo después del Gate 1 del CU-02** (aprobación de esta Parte II y de D-29 a D-32). Se trabaja en la rama `feat/cu-02`.
+
+| Tarea | Cambio acotado | Requisitos / TC | Dependencia y criterio de cierre | Estado |
+| :--- | :--- | :--- | :--- | :--- |
+| T-14 | Agregar `DificultadRecorrido`, el campo `dificultad` y el catálogo de ejemplo de II.4. | RF-05, RNF-12, D-32; regresión TC-02/03/08 | Gate 1. Suite existente en verde, sin cambios en c1–c3. | Completada — catálogo de 8 circuitos con dificultad; c1–c3 sin cambios; suite 80/80 |
+| T-15 | `domain/filtros.ts`: `OPCIONES_FILTRO`, `caloriasEstimadas`, `cumpleFiltro` y `filtrarRecorridos`, con pruebas. | RF-05, RNF-12, D-30; TC-35, TC-34 (dominio) | Después de T-14. Límites y AND probados. | Completada — `domain/filtros.ts` + `filtros.test.ts` (6 pruebas: opciones, límites, AND, 5.A, D-31, cobertura) |
+| T-16 | Botón «Filtrar recorridos» en `SelectorModalidad`, `PanelFiltros` con selects, Buscar y Limpiar, e ícono. | CA2-01..04, D-31/32; TC-31/32/33/39 | Después de T-15. Accesible, en español y en ambos temas. | Completada — botón con `aria-expanded`, `PanelFiltros`, ícono embudo; TC-31/32/33/39 |
+| T-17 | Integrar los resultados con el selector de circuitos, el mensaje 5.A, el Iniciar deshabilitado sin resultados y el reseteo al finalizar. | CA2-05..08, CU-01 3.A.2; TC-34/36/37/38/40 | Después de T-16. El CU-01 no cambia. | Completada — selector filtrado, línea de dificultad, 5.A sin estimaciones ni Iniciar, reseteo al volver; TC-34/36/37/38/40 |
+| T-18 | VALIDATE del CU-02: `npm test`, `npm run lint`, `npm run build`, Chrome headless responsive (TC-07 ampliado) y registro en REGISTRO_BUILD. | Todos los de II.7 y la regresión TC-01..30 | Después de T-17. Evidencia registrada y fallas devueltas a su tarea. | Completada — 87/87 pruebas, lint y build; Chrome headless 104 casos de configuración + 195 de recorrido sin fallas; ver REGISTRO_BUILD |
+
+**Notas de BUILD (19/11/2026, no cambian requisitos):**
+- **Contrato de filtrado (II.5):** `filtrarRecorridos(filtro, catalogo)` recibe el catálogo como parámetro obligatorio, para que `domain/` no dependa de `services/`. El atajo con el catálogo de ejemplo es `filtrarCircuitos(filtro)`, en `services/catalogo.ts`.
+- **Dificultad visible (II.3.1):** en celular el `<select>` nativo recorta el texto de la opción. Por eso, debajo del selector se muestra «Dificultad: X · km · kcal» del circuito elegido.
+- **Extensión 5.A:** cuando no hay resultados, se ocultan las estimaciones de viabilidad (no hay circuito) y la alerta «Circuito no seleccionado», que duplicaría el mensaje de sin resultados. «Iniciar Recorrido» sigue deshabilitado.
+- **Prueba existente modificada:** `src/test/temas.test.tsx` verificaba que el botón de filtros estuviera oculto (T-05b). Por D-29 ahora verifica que esté visible.
+---
+
 ## 11. Historial de Cambios
 
 | Versión | Fecha      | Autor  | Cambio                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
@@ -1269,6 +1522,7 @@ RF-09 queda asociado a T-10b y TC-13/14 dentro de la emergencia acotada del SPEC
 | 0.3 | 18/11/2026 | Equipo (propuesta asistida por IA) | Evolución sobre v0.2: referencia al SPEC/CU actuales y rutas UML reales; contraste estático con implementación; RF-18 y TC-26; reincorporación RNF-15 y falta inicial de definición RF-09; versiones instaladas, arquitectura efectiva y simplificación propuesta; claves/tipos de persistencia reales; brechas de alertas/audio/BLE/pausa/emergencia/métricas; trazabilidad de 18 CA y todos los RF/RNF; decisiones previas conservadas y D-18 a D-25 documentadas; plan incremental T-01 a T-12 para adaptar código existente. Solo cambia RFC, sin BUILD ni VALIDATE. Ampliación de la misma propuesta con Entrega 4 (pp. 3–8): se precisan RF-09/RNF-05/RNF-15, D-18 queda resuelto documentalmente, se agrega TC-27 y tareas de tema/composición, y se registra diferencia RF-06/RNF-21 con SPEC actualizado en D-26. |
 | 0.4 | 19/11/2026 | Integrante (propuesta asistida por IA) | D-27: clima ilustrado, barra inferior sin batería/clima durante el recorrido, Bluetooth/smartwatch como íconos, corrección de la voz de las alertas; párrafo en 4.4, TC-28 y TC-29. Pendiente de aprobación del equipo. |
 | 0.5 | 19/11/2026 | Integrante (propuesta asistida por IA) | D-28: calorías siempre visibles durante el recorrido y BPM adicional con vínculo; grilla simétrica de 7 tarjetas (4.4), TC-06 ajustado, TC-30 y T-13. |
+| 0.6 | 19/11/2026 | Integrante (propuesta asistida por IA) | Extensión con la **Parte II — CU N.º 2: Filtrar recorridos** (RF-05, RNF-12, SPEC Entrega 4 pp. 14–16): alcance, contraste, diseño, modelo de datos, contratos, estructura, TC-31 a TC-40, trazabilidad, D-29 a D-32 y T-14 a T-18. Sin borrar contenido de la Parte I; notas «Superado en v0.6 (D-29)» en D-02, T-05b y los textos de marcador. Pendiente Gate 1 del CU-02. |
 
 **Registro posterior de aprobación y arranque BUILD (v0.3, 18/11/2026):** equipo aprobó el RFC en el chat y aclaró que lluvia/viento alertan cuando son elevados. Se sincronizan encabezado, decisiones y T-01a; se autoriza únicamente T-01b a continuación. La regla climática no se implementa en esta tarea. T-01b completada: 23 pruebas aprobadas en 5 archivos y build exitoso; no se modificaron código, configuración, dependencias ni pruebas. Se ejecutó con Node 25.4.0/npm 11.7.0; Node 22 no disponible. El primer intento en sandbox falló por permisos de lectura de esbuild y pasó al repetir con permisos. Evidencia en REGISTRO_BUILD.md. T-02a fue autorizada y completada posteriormente; evidencia en el registro siguiente.
 
@@ -1288,3 +1542,10 @@ RF-09 queda asociado a T-10b y TC-13/14 dentro de la emergencia acotada del SPEC
 - [ ] Cada criterio de aceptación del Spec tiene al menos un caso de prueba.
 - [x] Propuestas funcionales/técnicas de 9.1 resueltas por humanos; D-18 resuelto documentalmente con Entrega 4, D-23 adopta paleta neutra/método de áreas; D-26 mantiene precedencia del SPEC actualizado. D-01 a D-04/D-11 mantienen decisiones previas.
 - [x] Equipo informó revisión y aprobación del RFC en el chat (Gate 1).
+
+**Parte II — CU-02 (v0.6):**
+
+- [ ] Cada CA2-01 a CA2-08, RF-05 y RNF-12 tiene al menos un TC (II.7.1 y II.7.2).
+- [x] D-29 a D-32 revisadas y aprobadas por el equipo.
+- [x] Catálogo de ejemplo (II.4) aceptado como dato ficticio.
+- [x] Equipo aprobó la Parte II (Gate 1 del CU-02); recién entonces arranca T-14. Aprobado en el chat el 19/11/2026.

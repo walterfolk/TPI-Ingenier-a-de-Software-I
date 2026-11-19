@@ -1,0 +1,26 @@
+# Casos de uso
+
+## CU N.º 2: Filtrar recorridos
+
+| Campo               | Descripción                                                                                       |
+| ------------------- | ------------------------------------------------------------------------------------------------- |
+| **Actor Primario**  | Conductor                                                                                         |
+| **Alcance**         | App (móvil)                                                                                       |
+| **Stakeholders**    | Conductor                                                                                         |
+| **Precondiciones**  | El conductor tiene una sesión activa y existen recorridos precargados disponibles para consultar. |
+| **Postcondiciones** | No especificadas.                                                                                 |
+
+### Escenario Principal
+
+1. El conductor selecciona el botón de filtros.
+2. El sistema muestra en pantalla el sub-panel de filtros, con campos para filtrar por calorías, kilómetros y dificultad.
+3. El conductor coloca valores pre-establecidos que filtran por calorías, kilómetros y dificultad.
+4. El conductor hace clic en buscar.
+5. La app muestra los recorridos que cumplen los filtros establecidos por el conductor.
+
+### Extensiones
+
+#### 5.A - No existen recorridos que cumplan los filtros seleccionados
+
+- **5.A.1** - La app informa que no se encontraron resultados.
+- **5.A.2** - Continúa en el paso 3.
