@@ -1,0 +1,52 @@
+# SPEC: Filtrar recorridos
+
+## Contexto / Problema
+
+Existen numerosos recorridos precargados que varían en tres características principales: distancia total en kilómetros, calorías estimadas a quemar y nivel de dificultad.
+
+Los conductores necesitan encontrar recorridos acordes a sus preferencias de manera fácil y rápida, mediante una funcionalidad que permita filtrar los recorridos disponibles según estas características.
+
+## Objetivos (Goals)
+
+- Permitir a los conductores acceder al panel de filtros mediante un botón disponible en el panel de recorridos.
+- Permitir filtrar recorridos según la distancia total (hasta 5 km, hasta 10 km, hasta 15 km o más de 15 km).
+- Permitir filtrar recorridos según las calorías estimadas a quemar (hasta 150 kcal, hasta 300 kcal, hasta 500 kcal o más de 500 kcal).
+- Permitir filtrar recorridos según el nivel de dificultad (BAJA, MEDIA y ALTA).
+- Permitir combinar los filtros disponibles para encontrar recorridos que cumplan con los criterios seleccionados.
+- Mostrar los recorridos que coincidan con los filtros aplicados.
+- Informar cuando no se encuentren recorridos que cumplan con los criterios establecidos.
+- Permitir modificar los filtros seleccionados y realizar una nueva búsqueda.
+
+## No-objetivos (Non-goals)
+
+- Permitir el ingreso de valores personalizados fuera de las opciones preestablecidas.
+- Crear, modificar o eliminar recorridos precargados.
+- Iniciar o realizar recorridos, funcionalidad contemplada en el CU N.º 1.
+- Buscar recorridos por nombre.
+
+## Requerimientos funcionales
+
+- CU_02
+- RF-05
+
+## Requerimientos no funcionales
+
+- RNF-12
+
+## Criterios de aceptación
+
+- [ ] Dado un conductor con sesión activa, cuando acceda al panel de recorridos, podrá visualizar un botón para acceder a los filtros disponibles.
+
+- [ ] Al presionar el botón de filtros, la aplicación muestra un subpanel con las opciones para filtrar por kilómetros, calorías estimadas y nivel de dificultad.
+
+- [ ] El conductor puede seleccionar únicamente los valores preestablecidos para cada filtro, sin posibilidad de ingresar valores personalizados.
+
+- [ ] El conductor puede seleccionar uno o más criterios de filtrado antes de realizar la búsqueda.
+
+- [ ] Dado que el conductor seleccionó uno o más filtros, cuando presione el botón "Buscar", la aplicación mostrará únicamente los recorridos que cumplan con todos los criterios seleccionados.
+
+- [ ] Dado que existen recorridos que cumplen con los filtros establecidos, cuando se realice la búsqueda, la aplicación mostrará la lista de recorridos encontrados.
+
+- [ ] Dado que ningún recorrido cumple con los filtros seleccionados, cuando el conductor presione "Buscar", la aplicación mostrará un mensaje indicando que no se encontraron resultados.
+
+- [ ] Dado que una búsqueda no devolvió resultados, cuando el conductor modifique los filtros y vuelva a presionar "Buscar", la aplicación actualizará la lista mostrando los recorridos que cumplan con los nuevos criterios.

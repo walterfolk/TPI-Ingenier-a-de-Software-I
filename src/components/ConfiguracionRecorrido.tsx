@@ -1,9 +1,10 @@
 import { Icono } from './Icono';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, type ReactNode } from 'react';
 import type { CondicionClima, IntensidadClima, ModalidadRecorrido } from '../domain/tipos';
 import { useAudioAlertas } from '../hooks/useAudioAlertas';
 import { bateriaBaja, esClimaAdverso } from '../domain/reglas';
-import { PUNTOS_REFERENCIA, CIRCUITOS_PRECARGADOS, calcularViabilidad, validarSeleccion } from '../services/catalogo';
+import { PUNTOS_REFERENCIA, CIRCUITOS_PRECARGADOS, calcularViabilidad, validarSeleccion, type CircuitoPrecargado } from '../services/catalogo';
+import { caloriasEstimadas, OPCIONES_FILTRO } from '../domain/filtros';
 
 interface ConfiguracionRecorridoProps {
   modalidad: ModalidadRecorrido;
@@ -11,12 +12,23 @@ interface ConfiguracionRecorridoProps {
   climaActual?: CondicionClima;
   intensidadClima?: IntensidadClima;
   onIniciar: (config: { modalidad: ModalidadRecorrido; origen?: string; destino?: string; circuitoId?: string }) => void;
+  /** CU-02: circuitos que cumplen el filtro aplicado (CU-01 3.A.2). Por defecto, todos. */
+  circuitos?: CircuitoPrecargado[];
+  /** CU-02: true si hubo una búsqueda con «Buscar» o «Limpiar filtros». */
+  busquedaRealizada?: boolean;
+  panelFiltros?: ReactNode;
 }
 
-export function ConfiguracionRecorrido({ modalidad, bateriaPct, climaActual = 'DESPEJADO', intensidadClima = 'NORMAL', onIniciar }: ConfiguracionRecorridoProps) {
+const etiquetaDificultad = (c: CircuitoPrecargado) => OPCIONES_FILTRO.dificultad.find(o => o.valor === c.dificultad)?.etiqueta ?? c.dificultad;
+
+export function ConfiguracionRecorrido({ modalidad, bateriaPct, climaActual = 'DESPEJADO', intensidadClima = 'NORMAL', onIniciar, circuitos = CIRCUITOS_PRECARGADOS, busquedaRealizada = false, panelFiltros }: ConfiguracionRecorridoProps) {
   const [origen, setOrigen] = useState(PUNTOS_REFERENCIA[0].nombre);
   const [destino, setDestino] = useState(PUNTOS_REFERENCIA[1].nombre);
-  const [circuitoId, setCircuitoId] = useState(CIRCUITOS_PRECARGADOS[0].id);
+  const [circuitoElegido, setCircuitoId] = useState(CIRCUITOS_PRECARGADOS[0].id);
+  // Si el circuito elegido quedó fuera del filtro se toma el primer resultado; sin resultados no hay selección (5.A).
+  const circuitoId = circuitos.some(c => c.id === circuitoElegido) ? circuitoElegido : circuitos[0]?.id;
+  const circuitoActual = circuitos.find(c => c.id === circuitoId);
+  const sinResultados = modalidad === 'PRECARGADO' && circuitos.length === 0;
   const errorSeleccion = validarSeleccion({ modalidad, origen, destino, circuitoId });
   const [confirmados, setConfirmados] = useState<string[]>([]);
   const hayBateriaBaja = bateriaBaja(bateriaPct);
@@ -96,27 +108,35 @@ export function ConfiguracionRecorrido({ modalidad, bateriaPct, climaActual = 'D
         </div>
       )}
 
+      {modalidad === 'PRECARGADO' && panelFiltros}
+
       {modalidad === 'PRECARGADO' && (
         <div className="campo-circuito">
-          <label>
-            Seleccionar circuito de ejemplo:
-          </label>
-          <select
-            aria-label="Circuito precargado"
-            value={circuitoId}
-            onChange={(e) => setCircuitoId(e.target.value)}
-          >
-            {CIRCUITOS_PRECARGADOS.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.nombre} {c.alertaTerreno ? `(${c.alertaTerreno})` : ''}
-              </option>
-            ))}
-          </select>
+          {busquedaRealizada && (circuitos.length > 0
+            ? <p className="resultado-filtro" role="status">{circuitos.length === 1 ? '1 recorrido encontrado' : `${circuitos.length} recorridos encontrados`}</p>
+            : <p className="resultado-filtro sin-resultados" role="status">No se encontraron resultados. Modifique los filtros y vuelva a buscar.</p>)}
+          {circuitos.length > 0 && <>
+            <label>
+              Seleccionar circuito de ejemplo:
+            </label>
+            <select
+              aria-label="Circuito precargado"
+              value={circuitoId}
+              onChange={(e) => setCircuitoId(e.target.value)}
+            >
+              {circuitos.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nombre} · {caloriasEstimadas(c)} kcal · {etiquetaDificultad(c)} {c.alertaTerreno ? `(${c.alertaTerreno})` : ''}
+                </option>
+              ))}
+            </select>
+            {circuitoActual && <p className="detalle-circuito">Dificultad: <strong>{etiquetaDificultad(circuitoActual)}</strong> · {circuitoActual.distanciaKm} km · {caloriasEstimadas(circuitoActual)} kcal</p>}
+          </>}
         </div>
       )}
 
-      {/* Estimaciones de viabilidad */}
-      <div className="estimaciones">
+      {/* Estimaciones de viabilidad (en 5.A no hay circuito: el mensaje de sin resultados las reemplaza) */}
+      {!sinResultados && <div className="estimaciones">
         <div className="estimaciones-titulo">Estimaciones de Viabilidad:</div>
         {modalidad !== 'LIBRE' ? (
           <>
@@ -133,7 +153,7 @@ export function ConfiguracionRecorrido({ modalidad, bateriaPct, climaActual = 'D
         ) : (
           <div>Sin límite de destino (Recorrido Libre).</div>
         )}
-      </div>
+      </div>}
 
       {!audioDisponible && <p role="status">Audio no disponible. Lea y confirme los avisos visuales.</p>}
       {pendientes.map(aviso => (
@@ -150,7 +170,7 @@ export function ConfiguracionRecorrido({ modalidad, bateriaPct, climaActual = 'D
       >
         <Icono nombre="continuar" />Iniciar Recorrido
       </button>
-      {errorSeleccion && <p role="alert">{errorSeleccion}</p>}
+      {errorSeleccion && !sinResultados && <p role="alert">{errorSeleccion}</p>}
     </div>
   );
 }

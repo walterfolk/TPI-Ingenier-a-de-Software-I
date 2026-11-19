@@ -1,20 +1,34 @@
-import { ModalidadRecorrido, ViabilidadRecorrido } from '../domain/tipos';
+import type { DificultadRecorrido, FiltroRecorridos, ModalidadRecorrido, ViabilidadRecorrido } from '../domain/tipos';
+import { filtrarRecorridos } from '../domain/filtros';
 import { CONFIG_RECORRIDO } from '../domain/config';
 
 export interface CircuitoPrecargado {
   id: string;
   nombre: string;
   distanciaKm: number;
+  /** RNF-12 / D-32: dificultad de ejemplo, no oficial. */
+  dificultad: DificultadRecorrido;
   alertaTerreno?: string;
   // Posiciones ficticias reproducibles para QA; no son datos oficiales ni GPS.
   alertasTerreno?: { id: string; km: number; descripcion: string }[];
 }
 
+/** Circuitos de ejemplo (D-32). c1–c3 conservan id, distancia y alertas de terreno. */
 export const CIRCUITOS_PRECARGADOS: CircuitoPrecargado[] = [
-  { id: 'c1', nombre: 'Circuito Costero (6 km)', distanciaKm: 6.0, alertaTerreno: 'Pendiente pronunciada en km 3', alertasTerreno: [{ id: 'pendiente', km: 3, descripcion: 'Pendiente pronunciada en km 3' }] },
-  { id: 'c2', nombre: 'Paseo del Bosque (4 km)', distanciaKm: 4.0 },
-  { id: 'c3', nombre: 'Ruta del Glaciar (10 km)', distanciaKm: 10.0, alertaTerreno: 'Superficie ripio y humedad', alertasTerreno: [{ id: 'ripio', km: 2, descripcion: 'Superficie de ripio y humedad en km 2 (simulado)' }] },
+  { id: 'c1', nombre: 'Circuito Costero (6 km)', distanciaKm: 6.0, dificultad: 'MEDIA', alertaTerreno: 'Pendiente pronunciada en km 3', alertasTerreno: [{ id: 'pendiente', km: 3, descripcion: 'Pendiente pronunciada en km 3' }] },
+  { id: 'c2', nombre: 'Paseo del Bosque (4 km)', distanciaKm: 4.0, dificultad: 'BAJA' },
+  { id: 'c3', nombre: 'Ruta del Glaciar (10 km)', distanciaKm: 10.0, dificultad: 'ALTA', alertaTerreno: 'Superficie ripio y humedad', alertasTerreno: [{ id: 'ripio', km: 2, descripcion: 'Superficie de ripio y humedad en km 2 (simulado)' }] },
+  { id: 'c4', nombre: 'Costanera Corta (3 km)', distanciaKm: 3.0, dificultad: 'BAJA' },
+  { id: 'c5', nombre: 'Mirador del Canal (8 km)', distanciaKm: 8.0, dificultad: 'MEDIA' },
+  { id: 'c6', nombre: 'Subida al Cerro (12 km)', distanciaKm: 12.0, dificultad: 'ALTA' },
+  { id: 'c7', nombre: 'Bahía Encerrada (14 km)', distanciaKm: 14.0, dificultad: 'BAJA' },
+  { id: 'c8', nombre: 'Gran Vuelta de la Ciudad (16 km)', distanciaKm: 16.0, dificultad: 'MEDIA' },
 ];
+
+/** CU-02: filtra el catálogo de ejemplo con las reglas puras de domain/filtros (II.5). */
+export function filtrarCircuitos(filtro: FiltroRecorridos): CircuitoPrecargado[] {
+  return filtrarRecorridos(filtro, CIRCUITOS_PRECARGADOS);
+}
 
 /**
  * Limitación documental: La documentación oficial (RFC y spec) no define coordenadas (x, y)
