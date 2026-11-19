@@ -57,13 +57,14 @@ export function PantallaSeguimiento(props: PantallaSeguimientoProps) {
         {props.conexion.estado === 'REINTENTANDO' ? 'Reintentando Bluetooth' : 'Bluetooth sin telemetría'} · Intentos: {props.conexion.intentos}. Datos del vehículo no actualizados.
       </p>}
       <section className="tablero-marcha" aria-label="Métricas principales y controles">
-        <div className="metricas">
+        <div className={'metricas' + (smartwatchVinculado ? ' metricas-7' : '')}>
           <Metrica nombre="Velocidad actual" icono="velocidad" valor={(velocidadVisible ?? '--') + ' km/h'} />
           <Metrica nombre="Distancia recorrida" icono="ruta" valor={(distanciaMetros / 1000).toFixed(2) + ' km'} />
           <Metrica nombre="Tiempo activo" icono="reloj" valor={Math.floor(tiempoActivoSeg / 60) + ':' + Math.floor(tiempoActivoSeg % 60).toString().padStart(2, '0')} />
           <Metrica nombre="Batería del triciclo" icono="bateria" valor={Math.round(bateriaPct) + '%'} />
           <Metrica nombre="Clima" icono={ICONO_CLIMA[climaActual]} valor={ETIQUETA_CLIMA[climaActual]} clase="metrica-clima" />
-          {smartwatchVinculado ? <Metrica nombre="Frecuencia cardíaca" icono="pulso" valor={frecuenciaCardiaca + ' bpm'} /> : <Metrica nombre="Calorías" icono="calorias" valor={caloriasConsumidas.toFixed(1) + ' kcal'} />}
+          {smartwatchVinculado && <Metrica nombre="Frecuencia cardíaca" icono="pulso" valor={frecuenciaCardiaca + ' bpm'} />}
+          <Metrica nombre="Calorías" icono="calorias" valor={caloriasConsumidas.toFixed(1) + ' kcal'} />
         </div>
         <div className="controles-marcha">
           <button aria-label="Pausar" disabled={estado !== 'EN_CURSO'} onClick={handlePausar}><Icono nombre="pausa" />Pausar</button>
