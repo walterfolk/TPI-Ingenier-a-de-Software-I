@@ -35,7 +35,7 @@ export function PantallaSeguimiento(props: PantallaSeguimientoProps) {
   }
 
   return (
-    <div role="region" aria-label="Seguimiento del recorrido">
+    <div className="seguimiento" role="region" aria-label="Seguimiento del recorrido">
       {errorGuardado && <p role="alert">{errorGuardado}</p>}
       {!audioDisponible && <p role="status">Audio no disponible. Lea y confirme los avisos visuales.</p>}
       {alertas.length > 0 && (
@@ -79,7 +79,7 @@ export function PantallaSeguimiento(props: PantallaSeguimientoProps) {
         <p><strong>Motores: {motoresDelanteros} | Frenos: {frenos}</strong></p>
         <p>Bluetooth: <strong>{bluetoothSincronizado ? 'Sincronizado' : 'Desconectado'}</strong></p>
         <p>Batería móvil: <strong>{props.estadoVehiculo?.bateriaMovilPct ?? 65}%</strong></p>
-        <p>Odómetro: <strong>{(props.estadoVehiculo?.odometroKm ?? 0).toFixed(2)} km</strong></p>
+        <p className="detalle-odometro">Odómetro: <strong>{(props.estadoVehiculo?.odometroKm ?? 0).toFixed(2)} km</strong></p>
         <p>Calorías: {caloriasConsumidas.toFixed(1)} kcal</p>
       </section>
 
