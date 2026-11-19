@@ -38,6 +38,8 @@ export function PantallaSeguimiento({
   
   // Telemetría y sensores simulados
   const [bateriaPct, setBateriaPct] = useState<number>(80);
+  const [bateriaInicialValor] = useState<number>(80);
+  const [acumuladorBateria, setAcumuladorBateria] = useState<number>(0);
   const [climaActual, setClimaActual] = useState<CondicionClima>('DESPEJADO');
   const [smartwatchVinculado, setSmartwatchVinculado] = useState<boolean>(true);
   const [frecuenciaCardiaca, setFrecuenciaCardiaca] = useState<number>(125);
@@ -81,9 +83,16 @@ export function PantallaSeguimiento({
       // Registrar velocidad
       setVelocidadesAcumuladas((prev) => [...prev, velocidadSimulada]);
 
-      // Consumo de batería proporcional a la distancia recorrida
+      // Consumo de batería proporcional a la distancia recorrida (decrece de a 1% entero)
       if (velocidadSimulada > 0) {
-        setBateriaPct((prev) => Math.max(0, Number((prev - 0.005).toFixed(2))));
+        setAcumuladorBateria((prevAcum) => {
+          const nuevoAcum = prevAcum + 0.005;
+          if (nuevoAcum >= 1) {
+            setBateriaPct((prevBat) => Math.max(0, prevBat - 1));
+            return nuevoAcum - 1;
+          }
+          return nuevoAcum;
+        });
       }
 
       // Evaluar reglas y alertas en tiempo real
@@ -191,6 +200,12 @@ export function PantallaSeguimiento({
   const handleCancelarEmergencia = () => setEstado('EN_CURSO');
   const handleSolicitarFin = () => setMostrarModalFin(true);
 
+  const handleCambiarBateria = (nuevoPct: number) => {
+    const entero = Math.round(nuevoPct);
+    setBateriaPct(entero);
+    setAcumuladorBateria(0);
+  };
+
   const handleConfirmarFinValido = () => {
     const velocidadPromedioKmh = velocidadesAcumuladas.length > 0
       ? velocidadesAcumuladas.reduce((a, b) => a + b, 0) / velocidadesAcumuladas.length
@@ -209,7 +224,7 @@ export function PantallaSeguimiento({
       velocidadPromedioKmh,
       frecuenciaCardiacaPromedio: smartwatchVinculado ? frecuenciaCardiaca : undefined,
       caloriasConsumidas,
-      bateriaInicial: 80,
+      bateriaInicial: bateriaInicialValor,
       bateriaFinal: Math.round(bateriaPct),
       alertas: historialAlertas,
     };
@@ -230,7 +245,7 @@ export function PantallaSeguimiento({
       {/* Panel de Simulación para pruebas */}
       <PanelSimulacion
         bateriaPct={bateriaPct}
-        onCambiarBateria={setBateriaPct}
+        onCambiarBateria={handleCambiarBateria}
         climaActual={climaActual}
         onCambiarClima={setClimaActual}
         frecuenciaCardiaca={frecuenciaCardiaca}
