@@ -54,14 +54,14 @@ export function PanelSimulacion({
       {expandido && (
         <div className="controles-simulacion">
           <fieldset><legend>Estado simulado</legend>
-            <label>Batería móvil<input aria-label="Batería móvil simulada" type="range" min="0" max="100" value={vehiculo.bateriaMovilPct} onChange={e => onCambiarVehiculo({bateriaMovilPct: Number(e.target.value)})} /></label>
-            <label>Odómetro<input aria-label="Odómetro simulado" type="number" min="0" value={vehiculo.odometroKm} onChange={e => {const n=Number(e.target.value); if(Number.isFinite(n) && n>=0) onCambiarVehiculo({odometroKm: n});}} /></label>
+            <label>Batería móvil<input aria-label="Batería móvil simulada" type="range" min="0" max="100" value={Math.round(vehiculo.bateriaMovilPct)} onChange={e => onCambiarVehiculo({bateriaMovilPct: Number(e.target.value)})} /></label>
+            <label>Odómetro<input aria-label="Odómetro simulado" type="number" min="0" value={Math.round(vehiculo.odometroKm)} onChange={e => {const n=Number(e.target.value); if(Number.isFinite(n) && n>=0) onCambiarVehiculo({odometroKm: Math.round(n)});}} /></label>
             <label>Asistencia<select aria-label="Asistencia simulada" value={vehiculo.asistenciaHibrida} onChange={e => onCambiarVehiculo({asistenciaHibrida: e.target.value as EstadoVehiculoMovil['asistenciaHibrida']})}><option>ACTIVA</option><option>LIMITADA</option><option>INACTIVA</option></select></label>
             {(['motoresDelanteros', 'frenos'] as const).map(campo => <label key={campo}>{campo === 'frenos' ? 'Frenos' : 'Motores'}<select aria-label={campo === 'frenos' ? 'Frenos simulados' : 'Motores simulados'} value={vehiculo[campo]} onChange={e => onCambiarVehiculo({[campo]: e.target.value as 'OK' | 'ATENCION'})}><option>OK</option><option>ATENCION</option></select></label>)}
           </fieldset>
           <label>Umbral cardíaco simulado (BPM)<input aria-label="Umbral cardíaco simulado" type="number" min="1" max="300" value={umbralFrecuencia} onChange={e => { const n = Number(e.target.value); if (n > 0 && n <= 300) onCambiarUmbral(n); }} /></label>
           <div>
-            <span>Batería Triciclo: <strong>{bateriaPct}%</strong></span>
+            <span>Batería Triciclo: <strong>{Math.round(bateriaPct)}%</strong></span>
             <input
               aria-label="Batería del triciclo"
               type="range"

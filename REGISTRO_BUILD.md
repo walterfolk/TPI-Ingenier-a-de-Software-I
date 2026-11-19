@@ -2,6 +2,7 @@
 
 | Tarea | Fecha | Archivos Modificados / Creados | Requisito / TC Cubierto | Comandos Ejecutados | Resultado |
 | :--- | :--- | :--- | :--- | :--- | :--- |
+| ResetEstadosPanelFin | 19/11/2026 | src/App.tsx, REGISTRO_BUILD.md | Interfaz / Reinicio de estados del panel de simulación al finalizar el recorrido | npm test -- --maxWorkers=4 --minWorkers=1, npm run lint, npm run build | Exitoso (73/73 tests aprobados, build de producción generado) |
 | T00 | 17/11/2026 | package.json, tsconfig.json, vite.config.ts, index.html, src/main.tsx, src/App.tsx, src/test/smoke.test.tsx, src/test/setup.ts, .gitignore, README.md, REGISTRO_BUILD.md | NF-05 / TC-21 | nvm use 22, npm install, npm test, npm run build | Exitoso (tests pasados y build generado en dist/) |
 | T01 | 18/11/2026 | src/domain/tipos.ts, src/domain/config.ts, src/domain/config.test.ts, REGISTRO_BUILD.md | Secciones 4.2, 5, 6.3 / D-02, D-03, D-04, D-05, D-06, D-08, D-10, D-14, D-15, D-17, D-19 | npm test, npm run build | Exitoso (tests aprobados, build generado) |
 | T02 | 18/11/2026 | src/domain/maquinaRecorrido.ts, src/domain/maquinaRecorrido.test.ts, REGISTRO_BUILD.md | Sección 4.2 / CU_01 / TC-20 | npm test, npm run build | Exitoso (tests aprobados, build generado) |

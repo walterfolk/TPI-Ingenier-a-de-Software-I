@@ -87,6 +87,15 @@ export default function App() {
   const handleVolverInicio = () => {
     setRecorridoTerminado(null);
     setConfiguracionActual(null);
+    setVehiculo({ bateriaMovilPct: 65, asistenciaHibrida: 'ACTIVA', odometroKm: 120, motoresDelanteros: 'OK', frenos: 'OK' });
+    setBateriaPct(80);
+    setClimaActual('DESPEJADO');
+    setIntensidadClima('NORMAL');
+    setSmartwatchVinculado(true);
+    setUmbralFrecuencia(160);
+    setFrecuenciaCardiaca(125);
+    setBluetoothSincronizado(true);
+    setVelocidadSimulada(12);
     setPantalla('CONFIGURACION');
   };
 
