@@ -1,10 +1,16 @@
 import React, { useState } from 'react';
-import { CondicionClima } from '../domain/tipos';
+import { CondicionClima, EstadoVehiculoMovil, IntensidadClima } from '../domain/tipos';
 
 interface PanelSimulacionProps {
+  vehiculo: Omit<EstadoVehiculoMovil, 'bluetoothSincronizado'>;
+  onCambiarVehiculo: (cambios: Partial<Omit<EstadoVehiculoMovil, 'bluetoothSincronizado'>>) => void;
+  umbralFrecuencia: number;
+  onCambiarUmbral: (valor: number) => void;
   bateriaPct: number;
   onCambiarBateria: (pct: number) => void;
   climaActual: CondicionClima;
+  intensidadClima: IntensidadClima;
+  onCambiarIntensidad: (valor: IntensidadClima) => void;
   onCambiarClima: (clima: CondicionClima) => void;
   frecuenciaCardiaca: number;
   onCambiarFc: (fc: number) => void;
@@ -17,9 +23,13 @@ interface PanelSimulacionProps {
 }
 
 export function PanelSimulacion({
+  vehiculo, onCambiarVehiculo,
+  umbralFrecuencia, onCambiarUmbral,
   bateriaPct,
   onCambiarBateria,
   climaActual,
+  intensidadClima,
+  onCambiarIntensidad,
   onCambiarClima,
   frecuenciaCardiaca,
   onCambiarFc,
@@ -33,115 +43,104 @@ export function PanelSimulacion({
   const [expandido, setExpandido] = useState(false);
 
   return (
-    <div style={{
-      background: '#edf2f7',
-      border: '1px solid #cbd5e0',
-      borderRadius: '8px',
-      padding: '8px 12px',
-      marginBottom: '16px',
-      fontSize: '0.85rem'
-    }}>
-      <div
+    <div className={'panel-simulacion' + (expandido ? ' expandido' : '')}>
+      <div className="cabecera-simulacion"
         onClick={() => setExpandido(!expandido)}
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          cursor: 'pointer',
-          fontWeight: 'bold',
-          color: '#2d3748'
-        }}
       >
-        <span>🛠️ Panel de Simulación (Hardware y Sensores)</span>
+        <span className="titulo-simulacion">Panel de Simulación (Hardware y Sensores)</span>
         <span>{expandido ? '▲ Ocultar' : '▼ Mostrar'}</span>
       </div>
 
       {expandido && (
-        <div style={{ marginTop: '10px', display: 'flex', flexDirection: 'column', gap: '8px', borderTop: '1px solid #cbd5e0', paddingTop: '8px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="controles-simulacion">
+          <fieldset><legend>Estado simulado</legend>
+            <label>Batería móvil<input aria-label="Batería móvil simulada" type="range" min="0" max="100" value={vehiculo.bateriaMovilPct} onChange={e => onCambiarVehiculo({bateriaMovilPct: Number(e.target.value)})} /></label>
+            <label>Odómetro<input aria-label="Odómetro simulado" type="number" min="0" value={vehiculo.odometroKm} onChange={e => {const n=Number(e.target.value); if(Number.isFinite(n) && n>=0) onCambiarVehiculo({odometroKm: n});}} /></label>
+            <label>Asistencia<select aria-label="Asistencia simulada" value={vehiculo.asistenciaHibrida} onChange={e => onCambiarVehiculo({asistenciaHibrida: e.target.value as EstadoVehiculoMovil['asistenciaHibrida']})}><option>ACTIVA</option><option>LIMITADA</option><option>INACTIVA</option></select></label>
+            {(['motoresDelanteros', 'frenos'] as const).map(campo => <label key={campo}>{campo === 'frenos' ? 'Frenos' : 'Motores'}<select aria-label={campo === 'frenos' ? 'Frenos simulados' : 'Motores simulados'} value={vehiculo[campo]} onChange={e => onCambiarVehiculo({[campo]: e.target.value as 'OK' | 'ATENCION'})}><option>OK</option><option>ATENCION</option></select></label>)}
+          </fieldset>
+          <label>Umbral cardíaco simulado (BPM)<input aria-label="Umbral cardíaco simulado" type="number" min="1" max="300" value={umbralFrecuencia} onChange={e => { const n = Number(e.target.value); if (n > 0 && n <= 300) onCambiarUmbral(n); }} /></label>
+          <div>
             <span>Batería Triciclo: <strong>{bateriaPct}%</strong></span>
             <input
+              aria-label="Batería del triciclo"
               type="range"
               min="0"
               max="100"
               value={bateriaPct}
               onChange={(e) => onCambiarBateria(Number(e.target.value))}
-              style={{ width: '120px' }}
             />
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
             <span>Velocidad: <strong>{velocidadSimulada} km/h</strong></span>
             <input
+              aria-label="Velocidad simulada"
               type="range"
               min="0"
               max="30"
               value={velocidadSimulada}
               onChange={(e) => onCambiarVelocidad(Number(e.target.value))}
-              style={{ width: '120px' }}
             />
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
             <span>Clima:</span>
             <select
+              aria-label="Clima simulado"
               value={climaActual}
-              onChange={(e) => onCambiarClima(e.target.value as CondicionClima)}
-              style={{ padding: '4px', borderRadius: '4px', border: '1px solid #cbd5e0' }}
+              onChange={(e) => {
+                const clima = e.target.value as CondicionClima;
+                onCambiarClima(clima);
+                if (clima === 'VIENTO_FUERTE') onCambiarIntensidad('ELEVADA');
+              }}
             >
               <option value="DESPEJADO">Despejado</option>
               <option value="NUBLADO">Nublado</option>
               <option value="LLUVIA">Lluvia</option>
+              <option value="VIENTO">Viento</option>
               <option value="VIENTO_FUERTE">Viento fuerte</option>
+              <option value="ESCARCHA_HIELO">Escarcha o hielo</option>
               <option value="TORMENTA">Tormenta</option>
             </select>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <label>Intensidad climática simulada
+              <select aria-label="Intensidad climática simulada" value={intensidadClima} onChange={e => {
+                const intensidad = e.target.value as IntensidadClima;
+                onCambiarIntensidad(intensidad);
+                if (intensidad === 'NORMAL' && climaActual === 'VIENTO_FUERTE') onCambiarClima('VIENTO');
+              }}><option value="NORMAL">Normal</option><option value="ELEVADA">Elevada</option></select>
+            </label>
+          </div>
+          <div>
             <span>Smartwatch:</span>
             <button
               onClick={onToggleSmartwatch}
-              style={{
-                padding: '2px 8px',
-                background: smartwatchVinculado ? '#319795' : '#e53e3e',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '0.75rem'
-              }}
             >
               {smartwatchVinculado ? 'Vinculado' : 'No vinculado'}
             </button>
           </div>
 
           {smartwatchVinculado && (
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div>
               <span>Pulso (BPM): <strong>{frecuenciaCardiaca} bpm</strong></span>
               <input
+                aria-label="Frecuencia cardíaca simulada"
                 type="range"
                 min="60"
                 max="190"
                 value={frecuenciaCardiaca}
                 onChange={(e) => onCambiarFc(Number(e.target.value))}
-                style={{ width: '120px' }}
               />
             </div>
           )}
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
             <span>Bluetooth (BLE):</span>
             <button
               onClick={onToggleBluetooth}
-              style={{
-                padding: '2px 8px',
-                background: bluetoothSincronizado ? '#319795' : '#e53e3e',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '0.75rem'
-              }}
             >
               {bluetoothSincronizado ? 'Conectado' : 'Desconectado'}
             </button>

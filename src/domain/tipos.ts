@@ -9,9 +9,13 @@ export type EstadoRecorrido =
   | "FINALIZADO"
   | "DESCARTADO";
 
+export type IntensidadClima = 'NORMAL' | 'ELEVADA';
+
 export type CondicionClima =
   | "DESPEJADO"
   | "NUBLADO"
+  | "ESCARCHA_HIELO"
+  | "VIENTO"
   | "LLUVIA"
   | "VIENTO_FUERTE"
   | "TORMENTA";

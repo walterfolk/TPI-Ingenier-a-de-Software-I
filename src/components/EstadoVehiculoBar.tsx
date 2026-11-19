@@ -1,22 +1,24 @@
-import React from 'react';
+import { Metrica } from './Metrica';
+import { Icono } from './Icono';
+import type { CondicionClima } from '../domain/tipos';
+import { ICONO_CLIMA, ETIQUETA_CLIMA } from './clima';
 
-export function EstadoVehiculoBar() {
+interface EstadoVehiculoBarProps {
+  bateriaPct: number;
+  climaActual: CondicionClima;
+  bluetoothSincronizado: boolean;
+  smartwatchVinculado: boolean;
+  /** Durante el recorrido solo se muestran Bluetooth y smartwatch: batería y clima ya están arriba (D-27). */
+  soloVinculos?: boolean;
+}
+
+export function EstadoVehiculoBar({ bateriaPct, climaActual, bluetoothSincronizado, smartwatchVinculado, soloVinculos }: EstadoVehiculoBarProps) {
   return (
-    <div style={{
-      background: '#f0f4f8',
-      padding: '8px 12px',
-      borderRadius: '8px',
-      fontSize: '0.85rem',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: '16px',
-      border: '1px solid #d9e2ec'
-    }}>
-      <span>🔋 Batería: <strong>80%</strong></span>
-      <span>☁️ Clima: <strong>Despejado</strong></span>
-      <span>📶 BT: <strong>Conectado</strong></span>
-      <span>⌚ Smartwatch: <strong>Vinculado</strong></span>
+    <div className={'estado-vehiculo' + (soloVinculos ? ' solo-vinculos' : '')} role="group" aria-label="Estado actual del vehículo">
+      {!soloVinculos && <Metrica nombre="Batería del triciclo" icono="bateria" valor={Math.round(bateriaPct)+'%'} />}
+      {!soloVinculos && <Metrica nombre="Clima actual" icono={ICONO_CLIMA[climaActual]} valor={ETIQUETA_CLIMA[climaActual]} clase="metrica-clima" />}
+      <span className="estado-vinculo"><Icono nombre={bluetoothSincronizado ? 'bluetooth' : 'bluetoothDesconectado'} /><span className="solo-lectura">BT: <strong>{bluetoothSincronizado ? 'Conectado' : 'Desconectado'}</strong></span></span>
+      <span className="estado-vinculo"><Icono nombre={smartwatchVinculado ? 'smartwatch' : 'smartwatchNo'} /><span className="solo-lectura">Smartwatch: <strong>{smartwatchVinculado ? 'Vinculado' : 'No vinculado'}</strong></span></span>
     </div>
   );
 }

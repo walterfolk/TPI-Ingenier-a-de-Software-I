@@ -1,0 +1,85 @@
+# SPEC: Realizar un recorrido
+
+## Contexto / Problema
+
+Los conductores necesitan una aplicación móvil que les permita seleccionar y realizar recorridos, visualizando el estado del vehículo, las condiciones climáticas y su actividad física en tiempo real, de manera clara y sin distracciones durante el trayecto.
+
+## Objetivos (Goals)
+
+- Permitir a los conductores seleccionar entre recorridos libres, personalizados y precargados.
+- Permitir a los conductores visualizar el estado de la batería y las condiciones climáticas antes y durante el recorrido.
+- Permitir a los conductores monitorear su actividad física y las métricas del recorrido en tiempo real.
+- Mostrar la información principal del recorrido directamente en pantalla, evitando interacciones innecesarias que puedan distraer al conductor.
+- Permitir a los conductores recibir alertas sonoras y visuales sobre condiciones climáticas adversas, terreno, batería baja y frecuencia cardíaca elevada.
+- Permitir a los conductores iniciar, pausar y confirmar la finalización de un recorrido.
+- Permitir acceder a una pantalla de emergencia que permanezca visible hasta que el conductor cancele la emergencia, como funcionalidad de prueba.
+
+## No-objetivos (Non-goals)
+
+- Consulta y gestión del historial de recorridos.
+- Gestión de recorridos y puntos de referencia oficiales.
+- Implementación completa del procedimiento de emergencia, contemplado en el CU N.º 8.
+
+## Requerimientos funcionales
+
+- CU_01
+- RF_04
+- RF_06
+- RF_07
+- RF_09
+- RF_14
+- RF_15
+- RF_18
+
+## Requerimientos no funcionales
+
+- RNF_04
+- RNF_05
+- RNF_06
+- RNF_07
+- RNF_09
+- RNF_10
+- RNF_11
+- RNF_14
+- RNF_15
+- RNF_20
+- RNF_22
+- RNF_27
+
+## Criterios de aceptación
+
+- [ ] Dado un conductor con sesión iniciada y un vehículo vinculado, cuando abra el panel de recorridos, podrá visualizar el estado de la batería, el clima actual y las modalidades de recorrido disponibles.
+
+- [ ] El conductor puede seleccionar entre recorrido libre, destino personalizado y recorrido precargado.
+
+- [ ] Al seleccionar un destino personalizado o recorrido precargado, la aplicación muestra las estimaciones de distancia, consumo de batería y calorías correspondientes.
+
+- [ ] El conductor puede iniciar un recorrido luego de confirmar su selección y visualizar las alertas previas correspondientes.
+
+- [ ] Durante el recorrido, la aplicación muestra en tiempo real la velocidad, el tiempo transcurrido, los kilómetros recorridos, el nivel de batería y la información climática.
+
+- [ ] La información principal del recorrido permanece visible directamente en el panel, sin necesidad de presionar botones para consultarla, salvo cuando una interacción sea necesaria.
+
+- [ ] La interfaz evita interacciones innecesarias durante el recorrido para reducir las distracciones del conductor.
+
+- [ ] Se emiten alertas sonoras y visuales cuando la batería alcanza niveles bajos, se detectan condiciones climáticas adversas o existen alertas de terreno.
+
+- [ ] Cuando la frecuencia cardíaca supera el umbral recomendado, la aplicación emite una alerta sugiriendo reducir la intensidad del pedaleo.
+
+- [ ] El conductor puede confirmar las alertas para silenciar los avisos sonoros sin interrumpir el recorrido.
+
+- [ ] Ante una pérdida de conexión Bluetooth, la aplicación realiza reintentos automáticos de reconexión e informa visualmente cuando no dispone de telemetría actualizada.
+
+- [ ] Al presionar el botón “Pausar recorrido”, el recorrido se detiene, mostrando un modal con un botón “Continuar recorrido”. El recorrido se reanudará sólo cuando el conductor presione el botón “Continuar recorrido”.
+
+- [ ] Al presionar el botón de emergencia, la aplicación muestra una pantalla de emergencia con la opción "Cancelar".
+
+- [ ] La pantalla de emergencia permanece visible mientras el conductor no presione el botón "Cancelar", sin cerrarse automáticamente y al presionar "Cancelar", la aplicación cierra la pantalla de emergencia y permite continuar con el recorrido.
+
+- [ ] El conductor puede finalizar un recorrido mediante un botón de finalización y su posterior confirmación.
+
+- [ ] Al finalizar un recorrido que cumple las condiciones mínimas de distancia o tiempo, la aplicación registra las métricas correspondientes en el historial.
+
+- [ ] Cuando el recorrido no cumple las condiciones mínimas establecidas, la aplicación informa que fue descartado y no lo incorpora al historial.
+
+- [ ] Durante el recorrido, si el conductor tiene una pulsera o reloj inteligente vinculado, la aplicación muestra su frecuencia cardíaca en tiempo real, expresada en BPM.

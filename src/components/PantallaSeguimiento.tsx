@@ -1,16 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import type { 
-  EstadoRecorrido, 
-  ModalidadRecorrido, 
-  CondicionClima, 
-  Alerta, 
-  AsistenciaHibrida, 
-  EstadoSistema, 
-  RecorridoGuardado 
-} from '../domain/tipos';
-import { CONFIG_RECORRIDO } from '../domain/config';
-import { esClimaAdverso, bateriaBaja, frecuenciaExcedida } from '../domain/reglas';
-import { PanelSimulacion } from './PanelSimulacion';
+import React from 'react';
+import { Icono } from './Icono';
+import { Metrica } from './Metrica';
+import { ICONO_CLIMA, ETIQUETA_CLIMA } from './clima';
+import { useRecorrido, type PantallaSeguimientoProps } from '../hooks/useRecorrido';
 import { PantallaEmergencia } from './PantallaEmergencia';
 import { ModalValidacionFin } from './ModalValidacionFin';
 
@@ -263,37 +255,19 @@ export function PantallaSeguimiento({
         <PantallaEmergencia onCancelarEmergencia={handleCancelarEmergencia} />
       )}
 
+      {errorGuardado && <p role="alert">{errorGuardado}</p>}
+      {!audioDisponible && <p role="status">Audio no disponible. Lea y confirme los avisos visuales.</p>}
       {/* Alertas Activas */}
       {alertas.length > 0 && (
-        <div style={{ marginBottom: '16px' }}>
+        <div className="alertas-activas">
           {alertas.map((alerta) => (
-            <div key={alerta.id} style={{
-              background: '#fffaf0',
-              border: '1px solid #ed8936',
-              borderRadius: '8px',
-              padding: '10px 12px',
-              marginBottom: '8px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              fontSize: '0.85rem'
-            }}>
+            <div className="alerta" key={alerta.id}>
               <div>
-                <strong style={{ color: '#c05621' }}>⚠️ Alerta ({alerta.tipo}):</strong>
-                <div style={{ color: '#4a5568' }}>{alerta.descripcion}</div>
+                <strong>Alerta ({alerta.tipo}):</strong>
+                <div>{alerta.descripcion}</div>
               </div>
               <button
                 onClick={() => confirmarAlerta(alerta.id)}
-                style={{
-                  background: '#ed8936',
-                  color: '#fff',
-                  border: 'none',
-                  padding: '6px 10px',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  fontWeight: 'bold',
-                  fontSize: '0.75rem'
-                }}
               >
                 Confirmar
               </button>
@@ -302,114 +276,36 @@ export function PantallaSeguimiento({
         </div>
       )}
 
-      {/* Tarjeta Principal de Seguimiento y Telemetría */}
-      <div style={{
-        background: '#fff',
-        padding: '16px',
-        borderRadius: '10px',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-        marginBottom: '16px'
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-          <h3 style={{ margin: 0, fontSize: '1.05rem', color: '#1a365d' }}>
-            {estado === 'EN_CURSO' ? '🟢 Recorrido en Curso' : estado === 'PAUSADO' ? '⏸️ Recorrido Pausado' : '⚡ Monitoreo'}
-          </h3>
-          <span style={{ fontSize: '0.8rem', background: '#e2e8f0', padding: '2px 8px', borderRadius: '4px', fontWeight: 'bold' }}>
-            {modalidad}
-          </span>
+      {props.conexion?.estado !== 'CONECTADO' && props.conexion && <p className="aviso-conexion" role="status">
+        {props.conexion.estado === 'SIN_TELEMETRIA' && <span role="img" aria-label="Bluetooth sin telemetría"><Icono nombre="bluetoothDesconectado" /></span>}
+        {props.conexion.estado === 'REINTENTANDO' ? 'Reintentando Bluetooth' : 'Bluetooth sin telemetría'} · Intentos: {props.conexion.intentos}. Datos del vehículo no actualizados.
+      </p>}
+      <section className="tablero-marcha" aria-label="Métricas principales y controles">
+        <div className="metricas">
+          <Metrica nombre="Velocidad actual" icono="velocidad" valor={(velocidadVisible ?? '--') + ' km/h'} />
+          <Metrica nombre="Distancia recorrida" icono="ruta" valor={(distanciaMetros / 1000).toFixed(2) + ' km'} />
+          <Metrica nombre="Tiempo activo" icono="reloj" valor={Math.floor(tiempoActivoSeg / 60) + ':' + Math.floor(tiempoActivoSeg % 60).toString().padStart(2, '0')} />
+          <Metrica nombre="Batería del triciclo" icono="bateria" valor={Math.round(bateriaPct) + '%'} />
+          <Metrica nombre="Clima" icono={ICONO_CLIMA[climaActual]} valor={ETIQUETA_CLIMA[climaActual]} clase="metrica-clima" />
+          {smartwatchVinculado ? <Metrica nombre="Frecuencia cardíaca" icono="pulso" valor={frecuenciaCardiaca + ' bpm'} /> : <Metrica nombre="Calorías" icono="calorias" valor={caloriasConsumidas.toFixed(1) + ' kcal'} />}
         </div>
-
-        {/* Info de ruta */}
-        <div style={{ fontSize: '0.85rem', color: '#4a5568', marginBottom: '14px', background: '#f7fafc', padding: '8px', borderRadius: '6px' }}>
-          {modalidad === 'PERSONALIZADO' && (
-            <div>Origen: <strong>{origen}</strong> ➔ Destino: <strong>{destino}</strong></div>
-          )}
-          {modalidad === 'PRECARGADO' && (
-            <div>Circuito: <strong>{nombreCircuito}</strong></div>
-          )}
-          {modalidad === 'LIBRE' && (
-            <div>Modalidad libre sin destino establecido.</div>
-          )}
+        <div className="controles-marcha">
+          <button aria-label="Pausar" disabled={estado !== 'EN_CURSO'} onClick={handlePausar}><Icono nombre="pausa" />Pausar</button>
+          <button aria-label="Emergencia" disabled={estado !== 'EN_CURSO'} onClick={handleEmergencia}><Icono nombre="emergencia" />Emergencia</button>
+          <button aria-label="Finalizar Recorrido" disabled={estado !== 'EN_CURSO'} onClick={handleSolicitarFin}><Icono nombre="fin" />Finalizar</button>
         </div>
-
-        {/* Panel de Telemetría Principal */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
-          <div style={{ background: '#edf2f7', padding: '10px', borderRadius: '8px', textAlign: 'center' }}>
-            <div style={{ fontSize: '0.75rem', color: '#718096' }}>VELOCIDAD ACTUAL</div>
-            <div style={{ fontSize: '1.4rem', fontWeight: 'bold', color: '#2d3748' }}>
-              {velocidadSimulada} <span style={{ fontSize: '0.8rem' }}>km/h</span>
-            </div>
-          </div>
-
-          <div style={{ background: '#edf2f7', padding: '10px', borderRadius: '8px', textAlign: 'center' }}>
-            <div style={{ fontSize: '0.75rem', color: '#718096' }}>DISTANCIA RECORRIDA</div>
-            <div style={{ fontSize: '1.4rem', fontWeight: 'bold', color: '#2d3748' }}>
-              {(distanciaMetros / 1000).toFixed(2)} <span style={{ fontSize: '0.8rem' }}>km</span>
-            </div>
-          </div>
-
-          <div style={{ background: '#edf2f7', padding: '10px', borderRadius: '8px', textAlign: 'center' }}>
-            <div style={{ fontSize: '0.75rem', color: '#718096' }}>TIEMPO ACTIVO</div>
-            <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#2d3748' }}>
-              {Math.floor(tiempoActivoSeg / 60)}:{(tiempoActivoSeg % 60).toString().padStart(2, '0')}
-            </div>
-          </div>
-
-          <div style={{ background: '#edf2f7', padding: '10px', borderRadius: '8px', textAlign: 'center' }}>
-            <div style={{ fontSize: '0.75rem', color: '#718096' }}>CALORÍAS</div>
-            <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#2d3748' }}>
-              {caloriasConsumidas} <span style={{ fontSize: '0.8rem' }}>kcal</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Estado del Sistema y Sensores */}
-        <div style={{ fontSize: '0.8rem', color: '#4a5568', background: '#f7fafc', padding: '10px', borderRadius: '8px', marginBottom: '16px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-          <div>🔋 Batería: <strong>{Math.round(bateriaPct)}%</strong></div>
-          <div>⚡ Asistencia Híbrida: <strong>{asistenciaHibrida}</strong></div>
-          <div>⚙️ Motores / Frenos: <strong>Motores: {motoresDelanteros} | Frenos: {frenos}</strong></div>
-          <div>☁️ Clima: <strong>{climaActual}</strong></div>
-          {smartwatchVinculado && (
-            <div>⌚ Frecuencia Cardíaca: <strong style={{ color: frecuenciaCardiaca > 160 ? '#c53030' : 'inherit' }}>{frecuenciaCardiaca} bpm</strong></div>
-          )}
-          <div>📶 Bluetooth: <strong>{bluetoothSincronizado ? 'Sincronizado' : 'Desconectado'}</strong></div>
-        </div>
-
-        {/* Botones de Control del Recorrido */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <div style={{ display: 'flex', gap: '8px' }}>
-            {estado === 'EN_CURSO' ? (
-              <button
-                onClick={handlePausar}
-                style={{ flex: 1, padding: '10px', background: '#dd6b20', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
-              >
-                ⏸️ Pausar
-              </button>
-            ) : (
-              <button
-                onClick={handleReanudar}
-                style={{ flex: 1, padding: '10px', background: '#319795', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
-              >
-                ▶️ Reanudar
-              </button>
-            )}
-
-            <button
-              onClick={handleEmergencia}
-              style={{ flex: 1, padding: '10px', background: '#e53e3e', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
-            >
-              🚨 Emergencia
-            </button>
-          </div>
-
-          <button
-            onClick={handleSolicitarFin}
-            style={{ width: '100%', padding: '12px', background: '#2b6cb0', color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}
-          >
-            🏁 Finalizar Recorrido
-          </button>
-        </div>
-      </div>
+      </section>
+      <section className="detalle-vehiculo" aria-label="Estado de la aplicación y del vehículo">
+        <h2>Estado del recorrido</h2><p className="detalle-modalidad">{modalidad}</p>
+        {modalidad === 'PERSONALIZADO' && <p className="detalle-ruta">Origen: {origen} · Destino: {destino}</p>}
+        {modalidad === 'PRECARGADO' && <p className="detalle-ruta">{nombreCircuito}</p>}
+        <p>Asistencia híbrida: <strong>{asistenciaHibrida}</strong></p>
+        <p><strong>Motores: {motoresDelanteros} | Frenos: {frenos}</strong></p>
+        <p>Bluetooth: <strong>{bluetoothSincronizado ? 'Sincronizado' : 'Desconectado'}</strong></p>
+        <p>Batería móvil: <strong>{props.estadoVehiculo?.bateriaMovilPct ?? 65}%</strong></p>
+        <p>Odómetro: <strong>{(props.estadoVehiculo?.odometroKm ?? 0).toFixed(2)} km</strong></p>
+        <p>Calorías: {caloriasConsumidas.toFixed(1)} kcal</p>
+      </section>
 
       {/* Modal de Validación de Mínimos al Finalizar */}
       {mostrarModalFin && (

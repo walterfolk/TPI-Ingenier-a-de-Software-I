@@ -1,25 +1,44 @@
-import React, { useState } from 'react';
-import type { ModalidadRecorrido } from '../domain/tipos';
-import { PUNTOS_REFERENCIA, CIRCUITOS_PRECARGADOS, calcularViabilidad } from '../services/catalogo';
+import { Icono } from './Icono';
+import React, { useEffect, useState } from 'react';
+import type { CondicionClima, IntensidadClima, ModalidadRecorrido } from '../domain/tipos';
+import { useAudioAlertas } from '../hooks/useAudioAlertas';
+import { bateriaBaja, esClimaAdverso } from '../domain/reglas';
+import { PUNTOS_REFERENCIA, CIRCUITOS_PRECARGADOS, calcularViabilidad, validarSeleccion } from '../services/catalogo';
 
 interface ConfiguracionRecorridoProps {
   modalidad: ModalidadRecorrido;
+  bateriaPct: number;
+  climaActual?: CondicionClima;
+  intensidadClima?: IntensidadClima;
   onIniciar: (config: { modalidad: ModalidadRecorrido; origen?: string; destino?: string; circuitoId?: string }) => void;
 }
 
-export function ConfiguracionRecorrido({ modalidad, onIniciar }: ConfiguracionRecorridoProps) {
+export function ConfiguracionRecorrido({ modalidad, bateriaPct, climaActual = 'DESPEJADO', intensidadClima = 'NORMAL', onIniciar }: ConfiguracionRecorridoProps) {
   const [origen, setOrigen] = useState(PUNTOS_REFERENCIA[0].nombre);
   const [destino, setDestino] = useState(PUNTOS_REFERENCIA[1].nombre);
   const [circuitoId, setCircuitoId] = useState(CIRCUITOS_PRECARGADOS[0].id);
+  const errorSeleccion = validarSeleccion({ modalidad, origen, destino, circuitoId });
+  const [confirmados, setConfirmados] = useState<string[]>([]);
+  const hayBateriaBaja = bateriaBaja(bateriaPct);
+  const avisos = [
+    ...(hayBateriaBaja ? [{ id: 'bateria', texto: 'Batería baja: confirme para asumir el inicio del recorrido.' }] : []),
+    ...(esClimaAdverso(climaActual, intensidadClima) ? [{ id: `clima-${climaActual}-${intensidadClima}`, texto: 'Clima adverso: extreme precauciones antes de iniciar.' }] : []),
+  ];
+  const pendientes = avisos.filter(aviso => !confirmados.includes(aviso.id));
+  const audioDisponible = useAudioAlertas(pendientes.map(aviso => aviso.texto));
+  useEffect(() => {
+    setConfirmados(prev => prev.filter(id => avisos.some(aviso => aviso.id === id)));
+  }, [hayBateriaBaja, climaActual, intensidadClima]);
 
   const viabilidad = calcularViabilidad({
     modalidad,
     origen,
     destino,
     circuitoId,
-  }, 80);
+  }, bateriaPct);
 
   const handleIniciarClick = () => {
+    if (errorSeleccion || pendientes.length) return;
     onIniciar({
       modalidad,
       origen: modalidad === 'PERSONALIZADO' ? origen : undefined,
@@ -29,49 +48,43 @@ export function ConfiguracionRecorrido({ modalidad, onIniciar }: ConfiguracionRe
   };
 
   return (
-    <div style={{
-      background: '#fff',
-      padding: '16px',
-      borderRadius: '10px',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-      marginBottom: '16px'
-    }}>
-      <h3 style={{ margin: '0 0 12px 0', fontSize: '1.05rem', color: '#1a365d' }}>
+    <div className="configuracion-recorrido">
+      <h3>
         Configuración de Recorrido ({modalidad})
       </h3>
 
       {modalidad === 'LIBRE' && (
-        <p style={{ fontSize: '0.9rem', color: '#4a5568', margin: '0 0 16px 0' }}>
+        <p>
           Recorrido sin destino fijo. Presione iniciar para comenzar la marcha libre.
         </p>
       )}
 
       {modalidad === 'PERSONALIZADO' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '16px' }}>
+        <div className="campos-ruta">
           <div>
-            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '4px' }}>
+            <label>
               Punto de Origen:
             </label>
             <select
+              aria-label="Punto de origen"
               value={origen}
               onChange={(e) => setOrigen(e.target.value)}
-              style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid #cbd5e0', fontSize: '0.9rem' }}
             >
               {PUNTOS_REFERENCIA.map((p) => (
                 <option key={`origen-${p.id}`} value={p.nombre}>
-                  {p.nombre} [{p.x} km, {p.y} km]
+                  {p.nombre}
                 </option>
               ))}
             </select>
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '4px' }}>
+            <label>
               Punto de Destino:
             </label>
             <select
+              aria-label="Punto de destino"
               value={destino}
               onChange={(e) => setDestino(e.target.value)}
-              style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid #cbd5e0', fontSize: '0.9rem' }}
             >
               {PUNTOS_REFERENCIA.map((p) => (
                 <option key={`destino-${p.id}`} value={p.nombre}>
@@ -84,18 +97,18 @@ export function ConfiguracionRecorrido({ modalidad, onIniciar }: ConfiguracionRe
       )}
 
       {modalidad === 'PRECARGADO' && (
-        <div style={{ marginBottom: '16px' }}>
-          <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '4px' }}>
-            Seleccionar Circuito Oficial:
+        <div className="campo-circuito">
+          <label>
+            Seleccionar circuito de ejemplo:
           </label>
           <select
+            aria-label="Circuito precargado"
             value={circuitoId}
             onChange={(e) => setCircuitoId(e.target.value)}
-            style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid #cbd5e0', fontSize: '0.9rem' }}
           >
             {CIRCUITOS_PRECARGADOS.map((c) => (
               <option key={c.id} value={c.id}>
-                {c.nombre} {c.alertaTerreno ? `(⚠️ ${c.alertaTerreno})` : ''}
+                {c.nombre} {c.alertaTerreno ? `(${c.alertaTerreno})` : ''}
               </option>
             ))}
           </select>
@@ -103,52 +116,41 @@ export function ConfiguracionRecorrido({ modalidad, onIniciar }: ConfiguracionRe
       )}
 
       {/* Estimaciones de viabilidad */}
-      <div style={{
-        background: '#f7fafc',
-        padding: '10px 12px',
-        borderRadius: '6px',
-        border: '1px solid #e2e8f0',
-        fontSize: '0.85rem',
-        marginBottom: '16px'
-      }} >
-        <div style={{ fontWeight: 'bold', marginBottom: '4px', color: '#2d3748' }}>📊 Estimaciones de Viabilidad:</div>
+      <div className="estimaciones">
+        <div className="estimaciones-titulo">Estimaciones de Viabilidad:</div>
         {modalidad !== 'LIBRE' ? (
           <>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', color: '#4a5568' }}>
+            <div className="estimaciones-grid">
               <div>Distancia: <strong>{viabilidad.distanciaKm.toFixed(1)} km</strong></div>
               <div>Tiempo est.: <strong>{viabilidad.tiempoEstimadoMin} min</strong></div>
               <div>Batería est.: <strong>{viabilidad.consumoBateriaPct}%</strong></div>
               <div>Calorías: <strong>{viabilidad.caloriasKcal} kcal</strong></div>
             </div>
-            <div style={{
-              marginTop: '6px',
-              color: viabilidad.esViable ? '#276749' : '#c53030',
-              fontWeight: 'bold'
-            }}>
+            <div className="estado-viabilidad" data-viable={viabilidad.esViable}>
               Estado: {viabilidad.esViable ? 'Viable (Suficiente batería)' : `No viable (${viabilidad.motivoNoViable})`}
             </div>
           </>
         ) : (
-          <div style={{ color: '#4a5568' }}>Sin límite de destino (Recorrido Libre).</div>
+          <div>Sin límite de destino (Recorrido Libre).</div>
         )}
       </div>
 
-      <button
+      {!audioDisponible && <p role="status">Audio no disponible. Lea y confirme los avisos visuales.</p>}
+      {pendientes.map(aviso => (
+        <div role="alert" key={aviso.id}>
+          <p>{aviso.texto}</p>
+          <button onClick={() => setConfirmados(prev => [...prev, aviso.id])}>
+            Confirmar {aviso.id === 'bateria' ? 'batería baja' : 'clima adverso'}
+          </button>
+        </div>
+      ))}
+      <button className="boton-primario iniciar-recorrido"
+        disabled={Boolean(errorSeleccion) || pendientes.length > 0}
         onClick={handleIniciarClick}
-        style={{
-          width: '100%',
-          padding: '12px',
-          background: '#319795',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '8px',
-          fontSize: '1rem',
-          fontWeight: 'bold',
-          cursor: 'pointer'
-        }}
       >
-        Iniciar Recorrido
+        <Icono nombre="continuar" />Iniciar Recorrido
       </button>
+      {errorSeleccion && <p role="alert">{errorSeleccion}</p>}
     </div>
   );
 }
