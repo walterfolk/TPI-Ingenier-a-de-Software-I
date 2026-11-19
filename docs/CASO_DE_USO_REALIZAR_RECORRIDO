@@ -1,0 +1,106 @@
+# Casos de uso
+
+## CU N.º 1: Realizar recorrido
+
+| Campo               | Descripción                                                                                                   |
+| ------------------- | ------------------------------------------------------------------------------------------------------------- |
+| **Actor Primario**  | Conductor                                                                                                     |
+| **Alcance**         | App móvil                                                                                                     |
+| **Stakeholders**    | Conductor                                                                                                     |
+| **Precondiciones**  | El conductor tiene la sesión iniciada, dispone de un vehículo asignado y la aplicación está vinculada con él. |
+| **Postcondiciones** | El recorrido queda finalizado y guardado en el historial con sus métricas correspondientes.                   |
+
+### Escenario Principal
+
+1. El conductor abre el panel de recorridos.
+2. El sistema muestra el panel con el estado de la batería del vehículo y las opciones para seleccionar la modalidad de recorrido (“Recorrido Libre”, “Destino Personalizado”, “Recorrido Precargado”) y el botón de “Filtrar recorridos”.
+3. El conductor selecciona la modalidad “Recorrido libre”.
+4. La app verifica el estado de la batería y las condiciones meteorológicas actuales.
+5. La app muestra en pantalla la confirmación de inicio de trayecto.
+6. El conductor presiona el botón “iniciar recorrido”.
+7. La app monitorea y muestra en tiempo real la telemetría del viaje (velocidad actual, tiempo transcurrido, kilómetros recorridos, nivel de batería e información del clima), desplegando los controles de marcha ("Pausar" y "Botón de emergencia") y muestra en pantalla la pulsación cardiaca del conductor.
+8. El conductor aprieta el botón “finalizar recorrido”.
+9. La app solicita confirmación para concluir el trayecto.
+10. El conductor presiona el botón “Confirmar finalización”.
+
+### Extensiones
+
+#### 3.A - El conductor decide filtrar los recorridos precargados
+
+- **3.A.1** - El sistema ejecuta el CU N.º 2: Filtrar recorrido.
+- **3.A.2** - El flujo retorna al paso 2 del escenario principal mostrando únicamente los recorridos que cumplen con los criterios de búsqueda.
+
+#### 3.B - El conductor selecciona la modalidad “Destino Personalizado”
+
+- **3.B.1** - La app muestra la lista de Puntos de Referencia oficiales predefinidos para seleccionar origen y destino.
+- **3.B.2** - El conductor selecciona un punto de origen y un punto de destino.
+- **3.B.3** - La app efectúa el cálculo previo de viabilidad (distancia estimada, consumo proyectado de batería y calorías a quemar).
+- **3.B.4** - Continúa en el paso 4.
+
+#### 3.C - El conductor selecciona la modalidad "Recorrido Precargado"
+
+- **3.C.1** - La app muestra el listado de circuitos oficiales precargados por la UNTDF.
+- **3.C.2** - El conductor selecciona un circuito precargado.
+- **3.C.3** - La app realiza el cálculo previo de viabilidad y proyecta las alertas específicas de terreno.
+- **3.C.4** - Continúa en el paso 4.
+
+#### 4.A - Batería baja antes de iniciar
+
+- **4.A.1** - La app emite una alerta sonora y visual informando que el vehículo posee menos de 20% de carga.
+- **4.A.2** - La app muestra un botón de confirmación en pantalla.
+- **4.A.3** - El conductor presiona "Confirmar" para silenciar la alerta sonora y asumir la responsabilidad de iniciar.
+- **4.A.4** - Continúa en el paso 5.
+
+#### 4.B - Condiciones climáticas adversas
+
+- **4.B.1** - La app lanza una alerta sonora y muestra en pantalla un aviso de precaución meteorológica con un botón de confirmación.
+- **4.B.2** - El conductor confirma el aviso.
+- **4.B.3** - La app detiene la alerta sonora.
+
+#### 7.A - Nivel de batería menor al 20% durante el recorrido
+
+- **7.A.1** - La app lanza una alerta sonora y visual notificando que la batería llegó al 20%.
+- **7.A.2** - La app muestra un botón de confirmación para silenciar el aviso sonoro.
+- **7.A.3** - El conductor presiona el botón "Confirmar" y se detiene el sonido de la alerta.
+- **7.A.4** - Continúa el monitoreo en el paso 7.
+
+#### 7.B - Condiciones climáticas adversas durante el recorrido
+
+- **7.B.1** - La app emite una alerta sonora y visual por cambio drástico de clima o alerta de terreno.
+- **7.B.2** - El conductor presiona el botón "Confirmar" para silenciar el aviso sonoro.
+- **7.B.3** - Continúa en el paso 7.
+
+#### 7.C - Pérdida de conexión Bluetooth durante el trayecto
+
+- **7.C.1** - La app detecta la desconexión con la centralita e inicia entre 3 y 5 reintentos automáticos de reconexión (cada 2 a 3 segundos).
+- **7.C.2** - Si los reintentos fallan, la app muestra un aviso visual en pantalla (ícono de Bluetooth tachado) notificando la pérdida de telemetría en tiempo real.
+- **7.C.3** - El pedaleo mecánico y la asistencia motora continúan operando con la última orden registrada mientras la app reintenta reconectar en segundo plano.
+- **7.C.4** - Continúa en el paso 7.
+
+#### 7.D - Frecuencia cardíaca elevada durante el recorrido
+
+- **7.D.1** - El smartwatch o banda vinculada detecta que las pulsaciones del conductor superan el umbral máximo recomendado para su perfil físico.
+- **7.D.2** - La app emite una alerta sonora y visual sugiriendo reducir la intensidad del pedaleo.
+- **7.D.3** - El conductor presiona el botón "Confirmar" para silenciar el aviso de voz/sonido.
+- **7.D.4** - Continúa en el paso 7.
+
+#### 7.E - Pausa y reanudación del recorrido durante el trayecto
+
+- **7.E.1** - El conductor presiona el botón "Pausar recorrido".
+- **7.E.2** - La app congela el temporizador de tiempo activo en movimiento y suspende la acumulación de distancia recorrida.
+- **7.E.3** - La app muestra en pantalla el estado "Recorrido en Pausa" y habilita el botón "Reanudar recorrido".
+- **7.E.4** - El conductor presiona el botón "Reanudar recorrido".
+- **7.E.5** - La app reanuda el conteo de tiempo de marcha y el registro continuo de métricas.
+- **7.E.6** - Continúa el monitoreo en el paso 7.
+
+#### 8.A - El conductor acciona el botón de emergencia
+
+- **8.A.1** - El conductor presiona el botón rojo de emergencia disponible en pantalla.
+- **8.A.2** - El sistema ejecuta el CU N.º 8: Accionar Botón de Emergencia.
+- **8.A.3** - Al finalizar el reporte de emergencia, el flujo retorna al paso 10 para finalizar el trayecto.
+
+#### 10.A - Descartar del recorrido
+
+- **10.A.1** - El sistema valida que el recorrido no superó la distancia o tiempo mínimo requerido.
+- **10.A.2** - La app muestra un aviso notificando que el recorrido fue descartado y no se incorporará al historial.
+- **10.A.3** - El caso de uso finaliza.

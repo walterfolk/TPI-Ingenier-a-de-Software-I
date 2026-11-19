@@ -3,9 +3,17 @@ import { esClimaAdverso, bateriaBaja, frecuenciaExcedida, cumpleMinimos } from '
 import { CondicionClima } from './tipos';
 
 describe('Reglas de negocio (T03 / RFC)', () => {
+  it('TC-08/25: lluvia y viento solo elevados; tormenta/escarcha siempre adversos', () => {
+    for (const clima of ['LLUVIA', 'VIENTO'] as const) {
+      expect(esClimaAdverso(clima, 'NORMAL')).toBe(false);
+      expect(esClimaAdverso(clima, 'ELEVADA')).toBe(true);
+    }
+    expect(esClimaAdverso('ESCARCHA_HIELO')).toBe(true);
+    expect(esClimaAdverso('TORMENTA')).toBe(true);
+  });
   describe('esClimaAdverso (D-04, TC-08)', () => {
     it('identifica correctamente los climas adversos', () => {
-      expect(esClimaAdverso("LLUVIA")).toBe(true);
+      expect(esClimaAdverso("LLUVIA", "ELEVADA")).toBe(true);
       expect(esClimaAdverso("VIENTO_FUERTE")).toBe(true);
       expect(esClimaAdverso("TORMENTA")).toBe(true);
     });

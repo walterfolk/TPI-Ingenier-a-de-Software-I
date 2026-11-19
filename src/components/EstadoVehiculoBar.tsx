@@ -1,22 +1,30 @@
-import React from 'react';
+import { Metrica } from './Metrica';
+import type { CondicionClima } from '../domain/tipos';
 
-export function EstadoVehiculoBar() {
+interface EstadoVehiculoBarProps {
+  bateriaPct: number;
+  climaActual: CondicionClima;
+  bluetoothSincronizado: boolean;
+  smartwatchVinculado: boolean;
+}
+
+const etiquetasClima: Record<CondicionClima, string> = {
+  DESPEJADO: 'Despejado',
+  NUBLADO: 'Nublado',
+  LLUVIA: 'Lluvia',
+  VIENTO: 'Viento',
+  ESCARCHA_HIELO: 'Escarcha o hielo',
+  VIENTO_FUERTE: 'Viento fuerte',
+  TORMENTA: 'Tormenta',
+};
+
+export function EstadoVehiculoBar({ bateriaPct, climaActual, bluetoothSincronizado, smartwatchVinculado }: EstadoVehiculoBarProps) {
   return (
-    <div style={{
-      background: '#f0f4f8',
-      padding: '8px 12px',
-      borderRadius: '8px',
-      fontSize: '0.85rem',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: '16px',
-      border: '1px solid #d9e2ec'
-    }}>
-      <span>🔋 Batería: <strong>80%</strong></span>
-      <span>☁️ Clima: <strong>Despejado</strong></span>
-      <span>📶 BT: <strong>Conectado</strong></span>
-      <span>⌚ Smartwatch: <strong>Vinculado</strong></span>
+    <div className="estado-vehiculo" role="group" aria-label="Estado actual del vehículo">
+      <Metrica nombre="Batería del triciclo" icono="bateria" valor={Math.round(bateriaPct)+'%'} />
+      <Metrica nombre="Clima actual" icono="clima" valor={etiquetasClima[climaActual]} />
+      <span className="estado-vinculo">BT: <strong>{bluetoothSincronizado ? 'Conectado' : 'Desconectado'}</strong></span>
+      <span className="estado-vinculo">Smartwatch: <strong>{smartwatchVinculado ? 'Vinculado' : 'No vinculado'}</strong></span>
     </div>
   );
 }

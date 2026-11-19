@@ -6,17 +6,19 @@ export interface CircuitoPrecargado {
   nombre: string;
   distanciaKm: number;
   alertaTerreno?: string;
+  // Posiciones ficticias reproducibles para QA; no son datos oficiales ni GPS.
+  alertasTerreno?: { id: string; km: number; descripcion: string }[];
 }
 
 export const CIRCUITOS_PRECARGADOS: CircuitoPrecargado[] = [
-  { id: 'c1', nombre: 'Circuito Costero (6 km)', distanciaKm: 6.0, alertaTerreno: 'Pendiente pronunciada en km 3' },
+  { id: 'c1', nombre: 'Circuito Costero (6 km)', distanciaKm: 6.0, alertaTerreno: 'Pendiente pronunciada en km 3', alertasTerreno: [{ id: 'pendiente', km: 3, descripcion: 'Pendiente pronunciada en km 3' }] },
   { id: 'c2', nombre: 'Paseo del Bosque (4 km)', distanciaKm: 4.0 },
-  { id: 'c3', nombre: 'Ruta del Glaciar (10 km)', distanciaKm: 10.0, alertaTerreno: 'Superficie ripio y humedad' },
+  { id: 'c3', nombre: 'Ruta del Glaciar (10 km)', distanciaKm: 10.0, alertaTerreno: 'Superficie ripio y humedad', alertasTerreno: [{ id: 'ripio', km: 2, descripcion: 'Superficie de ripio y humedad en km 2 (simulado)' }] },
 ];
 
 /**
- * Limitación documental: La documentación oficial (RFC y spec) no define coordenadas (x, y) 
- * oficiales en kilómetros para los puntos de referencia. Se asignan coordenadas provisionales 
+ * Limitación documental: La documentación oficial (RFC y spec) no define coordenadas (x, y)
+ * oficiales en kilómetros para los puntos de referencia. Se asignan coordenadas provisionales
  * orientativas con fines de cálculo de distancia euclídea.
  */
 export interface PuntoReferencia {
@@ -40,10 +42,34 @@ export interface ConfiguracionRuta {
   circuitoId?: string;
 }
 
+/** Una selección inválida bloquea el inicio; la autonomía insuficiente solo informa (D-21). */
+export function validarSeleccion(config: ConfiguracionRuta): string | undefined {
+  if (config.modalidad === 'LIBRE') return;
+  if (config.modalidad === 'PERSONALIZADO') {
+    if (!config.origen || !config.destino) return 'Seleccione origen y destino';
+    const origen = PUNTOS_REFERENCIA.find(p => p.id === config.origen || p.nombre === config.origen);
+    const destino = PUNTOS_REFERENCIA.find(p => p.id === config.destino || p.nombre === config.destino);
+    if (!origen || !destino) return 'Punto de referencia inexistente';
+    if (origen.id === destino.id) return 'Origen igual a destino';
+    return;
+  }
+  if (config.modalidad === 'PRECARGADO') {
+    if (!config.circuitoId) return 'Circuito no seleccionado';
+    if (!CIRCUITOS_PRECARGADOS.some(c => c.id === config.circuitoId)) return 'Identificador de circuito inexistente';
+    return;
+  }
+  return 'Modalidad inexistente';
+}
+
 /**
  * Calcula la viabilidad de un recorrido según los parámetros de 6.3 y el RFC (D-15).
  */
 export function calcularViabilidad(config: ConfiguracionRuta, bateriaActualPct: number = 80): ViabilidadRecorrido {
+  const error = validarSeleccion(config);
+  if (error) return {
+    distanciaKm: 0, tiempoEstimadoMin: 0, consumoBateriaPct: 0, caloriasKcal: 0,
+    esViable: false, motivoNoViable: error,
+  };
   if (config.modalidad === 'LIBRE') {
     return {
       distanciaKm: 0,

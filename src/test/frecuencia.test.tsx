@@ -1,0 +1,20 @@
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
+import { afterEach, expect, it } from 'vitest';
+import App from '../App';
+afterEach(cleanup);
+it('TC-26/09: actualiza BPM normal, oculta al desvincular y recupera lectura vigente', () => {
+  render(<App />);
+  fireEvent.click(screen.getByText(/Panel de Simulación/));
+  fireEvent.click(screen.getByRole('button', { name: 'Iniciar Recorrido' }));
+  const panel = within(screen.getByRole('region', { name: 'Seguimiento del recorrido' }));
+  expect(panel.getByText('125 bpm')).toBeInTheDocument();
+  fireEvent.change(screen.getByRole('slider', { name: 'Frecuencia cardíaca simulada' }), { target: { value: '140' } });
+  expect(panel.getByText('140 bpm')).toBeInTheDocument();
+  expect(panel.queryByText(/Reduzca la intensidad/)).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Vinculado' }));
+  expect(panel.queryByText('140 bpm')).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'No vinculado' }));
+  expect(panel.getByText('140 bpm')).toBeInTheDocument();
+  fireEvent.change(screen.getByRole('spinbutton', { name: 'Umbral cardíaco simulado' }), { target: { value: '130' } });
+  expect(panel.getByText(/Reduzca la intensidad/)).toBeInTheDocument();
+});

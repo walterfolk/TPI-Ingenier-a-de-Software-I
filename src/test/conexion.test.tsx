@@ -1,0 +1,26 @@
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, expect, it, vi } from 'vitest';
+import App from '../App';
+afterEach(() => { cleanup(); vi.useRealTimers(); });
+it('TC-11/18/24: informa pérdida, congela distancia sin detener reloj y recupera datos', () => {
+  vi.useFakeTimers(); render(<App />);
+  fireEvent.click(screen.getByText(/Panel de Simulación/));
+  fireEvent.click(screen.getByRole('button', { name: 'Iniciar Recorrido' }));
+  act(() => vi.advanceTimersByTime(3000));
+  const leer = () => JSON.parse(localStorage.getItem('triciclos.recorridoEnCurso.v1')!);
+  const distancia = leer().distanciaKm;
+  fireEvent.click(screen.getByRole('button', { name: 'Conectado' }));
+  expect(screen.getByText(/Reintentando Bluetooth/)).toBeInTheDocument();
+  expect(screen.queryByRole('img', { name: 'Bluetooth sin telemetría' })).not.toBeInTheDocument();
+  act(() => vi.advanceTimersByTime(9000));
+  expect(screen.getAllByText(/Bluetooth sin telemetría/).length).toBeGreaterThan(0);
+  expect(screen.getByRole('img', { name: 'Bluetooth sin telemetría' })).toBeInTheDocument();
+  expect(leer().distanciaKm).toBe(distancia);
+  expect(leer().tiempoActivoSeg).toBe(12);
+  fireEvent.click(screen.getByRole('button', { name: 'Desconectado' }));
+  act(() => vi.advanceTimersByTime(3000));
+  act(() => vi.advanceTimersByTime(1000));
+  expect(screen.queryByText(/Datos del vehículo no actualizados/)).not.toBeInTheDocument();
+  expect(screen.queryByRole('img', { name: 'Bluetooth sin telemetría' })).not.toBeInTheDocument();
+  expect(leer().distanciaKm).toBeGreaterThan(distancia);
+});

@@ -1,11 +1,12 @@
-import { CondicionClima } from './tipos';
+import { CondicionClima, IntensidadClima } from './tipos';
 import { CONFIG_RECORRIDO } from './config';
 
 /**
  * Evalúa si una condición climática es adversa (D-04, sección 6.3).
- * Climas adversos: LLUVIA, VIENTO_FUERTE, TORMENTA.
+ * D-09: lluvia/viento elevados, tormenta y escarcha/hielo. VIENTO_FUERTE es elevado por definición.
  */
-export function esClimaAdverso(clima: CondicionClima): boolean {
+export function esClimaAdverso(clima: CondicionClima, intensidad: IntensidadClima = 'NORMAL'): boolean {
+  if (clima === 'LLUVIA' || clima === 'VIENTO') return intensidad === 'ELEVADA';
   return (CONFIG_RECORRIDO.CLIMAS_ADVERSOS as readonly string[]).includes(clima);
 }
 
@@ -21,11 +22,11 @@ export function bateriaBaja(bateriaPct: number): boolean {
  * Evalúa si la frecuencia cardíaca excede el umbral máximo recomendado (D-05, sección 6.3).
  * Excedida: valor estrictamente superior a 160 bpm (y solo con smartwatch vinculado).
  */
-export function frecuenciaExcedida(frecuenciaBpm: number, smartwatchVinculado: boolean): boolean {
+export function frecuenciaExcedida(frecuenciaBpm: number, smartwatchVinculado: boolean, umbralBpm: number = CONFIG_RECORRIDO.UMBRAL_FRECUENCIA_CARDIACA_BPM): boolean {
   if (!smartwatchVinculado) {
     return false;
   }
-  return frecuenciaBpm > CONFIG_RECORRIDO.UMBRAL_FRECUENCIA_CARDIACA_BPM;
+  return frecuenciaBpm > umbralBpm;
 }
 
 /**
